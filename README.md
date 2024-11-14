@@ -1,6 +1,6 @@
-# mynewapp
+# FootballApp
 
-A new Flutter project.
+A new Flutter project. Flutter 3.24.3
 
 ## Getting Started
 
