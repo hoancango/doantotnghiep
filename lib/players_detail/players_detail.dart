@@ -1,32 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:mynewapp/common_resources.dart';
+import 'package:mynewapp/players_detail/players_detail_controller.dart';
 import 'package:mynewapp/tab_content_base.dart';
 import 'package:mynewapp/tabview_base.dart';
 
 class PlayersDetail extends StatefulWidget {
-  const PlayersDetail({super.key});
+  const PlayersDetail({super.key, this.color = Colors.red, this.clubName = '', this.clubCrest = '', this.playerName = '', this.playerImage = ''});
+  final Color color;
+  final String clubName;
+  final String clubCrest;
+  final String playerName;
+  final String playerImage;
 
   @override
   State<PlayersDetail> createState() => _PlayersDetailState();
 }
 
 class _PlayersDetailState extends State<PlayersDetail> {
-  List<String> runningCups = [];
-  List<String> imageCups = [];
+  late PlayersInfoController _controller;
 
   @override
   void initState() {
-    runningCups = [
-      "Premier League 2024/2025",
-      "League Cup 2024/2025",
-      "UEFA Champions League 2024/2025",
-    ];
-    imageCups = [
-      "https://media.api-sports.io/football/leagues/39.png",
-      "https://media.api-sports.io/football/leagues/48.png",
-      "https://media.api-sports.io/football/leagues/2.png",
-    ];
+    _controller = Get.put(PlayersInfoController());
     super.initState();
   }
 
@@ -37,26 +34,32 @@ class _PlayersDetailState extends State<PlayersDetail> {
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        title: safeText(text: 'Rodri', color: Colors.white),
-        backgroundColor: Colors.blue.shade600,
+        title: safeText(text: widget.playerName, color: Colors.white),
+        backgroundColor:
+            Color.alphaBlend(Colors.black.withOpacity(0.5), widget.color),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(90.h),
           child: playersHeader(
-            "https://media.api-sports.io/football/players/44.png",
-            "https://media.api-sports.io/football/teams/50.png",
-            "Rodri",
-            "Manchester City",
-            Colors.blue.shade600,
+            widget.playerImage,
+            widget.clubCrest,
+            widget.playerName,
+            widget.clubName,
+            Color.alphaBlend(Colors.black.withOpacity(0.5), widget.color),
           ),
         ),
       ),
       body: TabBase(
         tabTitleList: ['Hồ sơ', 'Thông số'],
         tabs: [
-          generalInfo(),
-          statsInfo(),
+          Obx(() => (_controller.isLoading.value == true)
+              ? const Center(child: CircularProgressIndicator())
+              : generalInfo()),
+          Obx(() => (_controller.isLoading.value == true)
+              ? const Center(child: CircularProgressIndicator())
+              : statsInfo()),
         ],
-        tabBarColor: Colors.blue.shade600,
+        tabBarColor:
+            Color.alphaBlend(Colors.black.withOpacity(0.5), widget.color),
       ),
     );
   }
@@ -74,31 +77,43 @@ class _PlayersDetailState extends State<PlayersDetail> {
                   children: [
                     infoRow(
                       label: 'First Name',
-                      text: 'Rodrigo',
+                      text: _controller.playerData.value?.player?.firstname ??
+                          'Rodrigo',
                     ),
                     infoRow(
                       label: 'Last Name',
-                      text: "Hernández Cascante",
+                      text: _controller.playerData.value?.player?.lastname ??
+                          "Hernández Cascante",
+                    ),
+                    infoRow(
+                      label: 'Age',
+                      text: '${_controller.playerData.value?.player?.age}',
                     ),
                     infoRow(
                       label: 'Nationality',
-                      text: 'Spain',
+                      text: _controller.playerData.value?.player?.nationality ??
+                          'Spain',
                     ),
                     infoRow(
                       label: 'Date of birth',
-                      text: "1996-06-22",
+                      text: _controller.playerData.value?.player?.birth?.date ??
+                          "1996-06-22",
                     ),
                     infoRow(
                       label: "Place",
-                      text: 'Madrid',
+                      text:
+                          _controller.playerData.value?.player?.birth?.place ??
+                              'Madrid',
                     ),
                     infoRow(
                       label: "Height",
-                      text: "190 cm",
+                      text: _controller.playerData.value?.player?.height ??
+                          "190 cm",
                     ),
                     infoRow(
                       label: "Weight",
-                      text: "82 kg",
+                      text: _controller.playerData.value?.player?.height ??
+                          "82 kg",
                     ),
                   ],
                 ),
@@ -108,31 +123,46 @@ class _PlayersDetailState extends State<PlayersDetail> {
               padding: const EdgeInsets.all(8.0),
               child: infoBlock(
                 title: 'Running Competitions',
-                content: Column(
-                  children: [
-                    infoImageRow(
-                      imageUrl: 'null',
-                      label: "FIFA Club World Cup",
-                      otherInfo: "CUP",
-                      imageHeight: 40.h,
-                      imageWidth: 40.w,
-                    ),
-                    infoImageRow(
-                      imageUrl: "https://crests.football-data.org/PL.png",
-                      label: 'Premier League',
-                      otherInfo: 'LEAGUE',
-                      imageHeight: 40.h,
-                      imageWidth: 40.w,
-                    ),
-                    infoImageRow(
-                      imageUrl: "https://crests.football-data.org/CL.png",
-                      label: "UEFA Champions League",
-                      otherInfo: 'CUP',
-                      imageHeight: 40.h,
-                      imageWidth: 40.w,
-                    ),
-                  ],
-                ),
+                content: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _controller.playerData.value?.statistics?.length,
+                    itemBuilder: (context, index) {
+                      final basePath =
+                          _controller.playerData.value?.statistics?[index];
+                      return infoImageRow(
+                        imageUrl: basePath?.league?.logo ?? '',
+                        label: basePath?.league?.name ?? "",
+                        otherInfo: basePath?.league?.country ?? "",
+                        imageHeight: 40.h,
+                        imageWidth: 40.w,
+                      );
+                    }),
+                // Column(
+                //   children: [
+                //     infoImageRow(
+                //       imageUrl: 'null',
+                //       label: "FIFA Club World Cup",
+                //       otherInfo: "CUP",
+                //       imageHeight: 40.h,
+                //       imageWidth: 40.w,
+                //     ),
+                //     infoImageRow(
+                //       imageUrl: "https://crests.football-data.org/PL.png",
+                //       label: 'Premier League',
+                //       otherInfo: 'LEAGUE',
+                //       imageHeight: 40.h,
+                //       imageWidth: 40.w,
+                //     ),
+                //     infoImageRow(
+                //       imageUrl: "https://crests.football-data.org/CL.png",
+                //       label: "UEFA Champions League",
+                //       otherInfo: 'CUP',
+                //       imageHeight: 40.h,
+                //       imageWidth: 40.w,
+                //     ),
+                //   ],
+                // ),
               ),
             ),
             SizedBox(
@@ -145,6 +175,8 @@ class _PlayersDetailState extends State<PlayersDetail> {
   }
 
   Widget statsInfo() {
+    final basePath = _controller
+        .playerData.value?.statistics?[_controller.selectedIndex.value];
     return TabContentBase(
       body: Stack(children: [
         SingleChildScrollView(
@@ -157,18 +189,24 @@ class _PlayersDetailState extends State<PlayersDetail> {
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
                   title: 'Overview',
-                  border: Border(
-                      top: BorderSide(
-                    color: Colors.blue.shade600,
-                    width: 4.0,
-                  )),
+                  border: commonBorder(),
                   content: Column(
                     children: [
-                      infoRow(label: 'Appearances', text: '2'),
-                      infoRow(label: 'Lineup', text: '1'),
-                      infoRow(label: 'Minutes', text: '65'),
-                      infoRow(label: 'Position', text: "Midfielder"),
-                      infoRow(label: 'Rating', text: "7.100000"),
+                      infoRow(
+                          label: 'Appearances',
+                          text: '${basePath?.games?.appearences ?? '_'}'),
+                      infoRow(
+                          label: 'Lineup',
+                          text: '${basePath?.games?.lineups ?? '_'}'),
+                      infoRow(
+                          label: 'Minutes',
+                          text: '${basePath?.games?.minutes ?? '_'}'),
+                      infoRow(
+                          label: 'Position',
+                          text: basePath?.games?.position ?? "_"),
+                      infoRow(
+                          label: 'Rating',
+                          text: basePath?.games?.rating ?? '_'),
                     ],
                   ),
                 ),
@@ -180,12 +218,16 @@ class _PlayersDetailState extends State<PlayersDetail> {
                   title: 'Attack',
                   content: Column(
                     children: [
-                      infoRow(label: 'Goals', text: '0'),
+                      infoRow(
+                          label: 'Goals',
+                          text: '${basePath?.goals?.total ?? '_'}'),
                       infoRow(
                         label: 'Shots',
-                        text: '_',
+                        text: '${basePath?.shots?.total ?? '_'}',
                       ),
-                      infoRow(label: 'Shots on target', text: '_'),
+                      infoRow(
+                          label: 'Shots on target',
+                          text: '${basePath?.shots?.on ?? '_'}'),
                     ],
                   ),
                 ),
@@ -197,11 +239,15 @@ class _PlayersDetailState extends State<PlayersDetail> {
                   title: 'Team Play',
                   content: Column(
                     children: [
-                      infoRow(label: 'Assists', text: '0'),
-                      infoRow(label: 'Passes', text: '61'),
+                      infoRow(
+                          label: 'Assists',
+                          text: '${basePath?.goals?.assists ?? '_'}'),
+                      infoRow(
+                          label: 'Passes',
+                          text: '${basePath?.passes?.total ?? '_'}'),
                       infoRow(
                         label: 'Key pass',
-                        text: '1',
+                        text: '${basePath?.passes?.key ?? '_'}',
                       ),
                     ],
                   ),
@@ -214,10 +260,18 @@ class _PlayersDetailState extends State<PlayersDetail> {
                   title: 'Discipline',
                   content: Column(
                     children: [
-                      infoRow(label: 'Yellow Cards', text: '0'),
-                      infoRow(label: 'Red Cards(2nd Yellow)', text: '0'),
-                      infoRow(label: 'Red Cards', text: '0'),
-                      infoRow(label: 'Committed', text: '1'),
+                      infoRow(
+                          label: 'Yellow Cards',
+                          text: '${basePath?.cards?.yellow ?? '_'}'),
+                      infoRow(
+                          label: 'Red Cards(2nd Yellow)',
+                          text: '${basePath?.cards?.yellowred ?? '_'}'),
+                      infoRow(
+                          label: 'Red Cards',
+                          text: '${basePath?.cards?.red ?? '_'}'),
+                      infoRow(
+                          label: 'Committed',
+                          text: '${basePath?.fouls?.committed ?? '_'}'),
                     ],
                   ),
                 ),
@@ -229,9 +283,15 @@ class _PlayersDetailState extends State<PlayersDetail> {
                   title: 'Substitutes',
                   content: Column(
                     children: [
-                      infoRow(label: 'In', text: '1'),
-                      infoRow(label: 'Out', text: '1'),
-                      infoRow(label: 'Bench', text: '2'),
+                      infoRow(
+                          label: 'In',
+                          text: '${basePath?.substitutes?.subIn ?? '_'}'),
+                      infoRow(
+                          label: 'Out',
+                          text: '${basePath?.substitutes?.subOut ?? '_'}'),
+                      infoRow(
+                          label: 'Bench',
+                          text: '${basePath?.substitutes?.bench ?? '_'}'),
                     ],
                   ),
                 ),
@@ -246,9 +306,12 @@ class _PlayersDetailState extends State<PlayersDetail> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: globalDropDownBox(
-              initialValue: runningCups[0],
-              dropDownData: runningCups,
-              addImageData: imageCups,
+              initialIndex: 0,
+              addImageData: _controller.imageLeagues,
+              dropDownData: _controller.leaguesNames,
+              onValueChanged: (index) {
+                _controller.selectedIndex.value = index;
+              },
             ),
           ),
         ),
@@ -301,8 +364,14 @@ class _PlayersDetailState extends State<PlayersDetail> {
   BoxBorder commonBorder() {
     return Border(
         top: BorderSide(
-      color: Colors.blue.shade600,
+      color: widget.color,
       width: 4.0,
     ));
   }
+
+  Color themeColor(){
+    return Color.alphaBlend(Colors.black.withOpacity(0.1), widget.color);
+  }
 }
+
+

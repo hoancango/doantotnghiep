@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mynewapp/base_screen.dart';
-import 'package:mynewapp/common_data.dart';
+import 'package:mynewapp/common_data/common_data_org_teams.dart';
 import 'package:mynewapp/common_resources.dart';
 
 class FavTeamQues extends StatefulWidget {
@@ -75,16 +75,16 @@ class _FavTeamQuesState extends State<FavTeamQues> {
     return GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: plTeams.length,
+        itemCount: orgPlTeams.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           crossAxisSpacing: 10.w,
           mainAxisSpacing: 10.h,
         ),
         itemBuilder: (context, index) {
-          String crest = plTeams[index]['crest'];
-          String shortName = plTeams[index]['shortName'];
-          String clubColors = plTeams[index]['clubColors'];
+          String crest = orgPlTeams[index]['crest'];
+          String shortName = orgPlTeams[index]['shortName'];
+          String clubColors = orgPlTeams[index]['clubColors'];
           return teamBlock(crest, shortName, clubColors);
         });
   }

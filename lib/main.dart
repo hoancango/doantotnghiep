@@ -18,6 +18,8 @@ import 'matches_detail/matches_detail.dart';
 import 'news/news_screen.dart';
 
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
   runApp(const MyGetApp());
 }
 

@@ -24,25 +24,25 @@ class _SettingState extends State<Setting> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              height: 50.h,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Icon(Icons.light_mode),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Chế độ'),
-                        Text('Sáng'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              // height: 50.h,
+              // child: Row(
+              //   children: [
+              //     Expanded(
+              //       flex: 1,
+              //       child: Icon(Icons.light_mode),
+              //     ),
+              //     Expanded(
+              //       flex: 4,
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           Text('Chế độ'),
+              //           Text('Sáng'),
+              //         ],
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ),
           ),
         ],

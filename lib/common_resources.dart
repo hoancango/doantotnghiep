@@ -203,10 +203,11 @@ Widget globalDropDownBox({
   List<String>? addImageData,
   double imageHeight = 30,
   double imageWidth = 30,
-  required String initialValue,
+  int initialIndex = 0,
   required List<String> dropDownData,
+  required void Function(int newValue) onValueChanged,
 }) {
-  RxString selectedValue = dropDownData[0].obs;
+  RxInt selectedIndex = initialIndex.obs;
   return Container(
     height: 60.h,
     decoration: BoxDecoration(color: Colors.white),
@@ -226,10 +227,10 @@ Widget globalDropDownBox({
             child: DropdownButton(
               underline: const SizedBox.shrink(),
               isExpanded: true,
-              value: selectedValue.value,
+              value: selectedIndex.value,
               items: List.generate(dropDownData.length, (index) {
-                return DropdownMenuItem<String>(
-                  value: dropDownData[index],
+                return DropdownMenuItem<int>(
+                  value: index,
                   child: Row(
                     children: [
                       if (addImageData != null)
@@ -246,8 +247,11 @@ Widget globalDropDownBox({
                   ),
                 );
               }).toList(),
-              onChanged: (String? newValue) {
-                (newValue != null) ? selectedValue.value = newValue : null;
+              onChanged: (int? newIndex) {
+                if(newIndex != null){
+                  selectedIndex.value = newIndex;
+                  onValueChanged(newIndex);
+                }
               },
             ),
           ),
@@ -419,7 +423,7 @@ Widget loadImages({
   BoxShape shape = BoxShape.rectangle,
   Widget errorWidget = const Icon(
     Icons.error,
-    color: Colors.red,
+    color: Colors.grey,
   ),
 }) {
   return Container(
@@ -480,14 +484,29 @@ Widget safeText({
   );
 }
 
-String toLocalTime({required String utcString}) {
+String toLocalTime({required String utcString, bool byWeekday = false}) {
   DateTime utcTime = DateTime.parse(utcString);
   DateTime localTime = utcTime.toLocal();
+  String weekDay = weekDayFormatter(localTime.weekday);
+  String day = localTime.day.toString().padLeft(2, '0');
+  String month = localTime.month.toString().padLeft(2, '0');
   String hours = localTime.hour.toString().padLeft(2, '0');
   String minutes = localTime.minute.toString().padLeft(2, '0');
-  String localTimeString = '$hours:$minutes';
+  String localTimeString = '';
+  if (byWeekday == false) {
+    localTimeString = '$hours:$minutes';
+  } else{
+    localTimeString = '$weekDay ngày $day tháng $month';
+  }
 
   return localTimeString;
+}
+
+
+String weekDayFormatter(int weekDayInt) {
+  String result = '';
+  (weekDayInt == 1) ? result = 'CN' : result = 'T$weekDayInt';
+  return result;
 }
 
 Widget getMatches(
@@ -785,3 +804,33 @@ Widget standings(List<Map<String, dynamic>> totalData) {
         );
       });
 }
+
+Color convertColor(String input) {
+  List<String> modifiedInput = input.split(' ');
+  String filteredInput = '';
+
+  Map<String, Color> colorMap = {
+    'red': Colors.red,
+    'blue': Colors.blue,
+    'green': Colors.green,
+    'yellow': Colors.yellow,
+    'orange': Colors.orange,
+    'purple': Colors.purple,
+    'pink': Colors.pink,
+    'brown': Colors.brown,
+    'grey': Colors.grey,
+    'black': Colors.black,
+    'white': Colors.white,
+    'cyan': Colors.cyan,
+    'lime': Colors.lime,
+    'teal': Colors.teal,
+    'indigo': Colors.indigo,
+    'amber': Colors.amber,
+  };
+  filteredInput = modifiedInput
+      .firstWhere((modInput) => colorMap.containsKey(modInput.toLowerCase()));
+
+  return colorMap[filteredInput.toLowerCase()] ?? Colors.grey;
+}
+
+

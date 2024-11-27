@@ -441,9 +441,10 @@ class _StandingsState extends State<Standings> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: globalDropDownBox(
-                initialValue: competitions[0],
+                initialIndex: 0,
                 dropDownData: competitions,
                 addImageData: cupsImages,
+                onValueChanged: (index){}
               ),
             ),
           ),
