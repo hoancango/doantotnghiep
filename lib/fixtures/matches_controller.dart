@@ -17,6 +17,7 @@ class MatchesController extends GetxController {
   RxBool isPl = true.obs;
   RxList<TotalFixtures> fixtures = <TotalFixtures>[].obs;
 
+
   @override
   Future<void> onInit() async {
     isLoading.value = true;

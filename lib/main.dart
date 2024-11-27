@@ -53,7 +53,16 @@ class MyGetApp extends StatelessWidget {
           //   ),
           // ],
 
-          home: const Home(),
+          home: LoaderOverlay(
+            overlayWidgetBuilder: (_){
+              return  const Center(child: SpinKitFadingCircle(
+                color: Colors.white,
+                size: 50,
+              ));
+            },
+
+              child: const Home()
+          ),
 
         );
       },

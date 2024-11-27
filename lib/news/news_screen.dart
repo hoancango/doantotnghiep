@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:mynewapp/base_screen.dart';
 import 'package:mynewapp/common_resources.dart';
 import 'package:mynewapp/home/news_model.dart';
@@ -150,7 +151,7 @@ class _NewsContentTabState extends State<NewsContentTab>
 
   @override
   void initState() {
-    _controller = Get.put(NewsController());
+    _controller = Get.put(NewsController(), permanent: true,);
     manageDataSource();
     super.initState();
   }
@@ -162,32 +163,37 @@ class _NewsContentTabState extends State<NewsContentTab>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(
-              () => ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: dataSource.toList().length,
-                itemBuilder: (context, index) {
-                  return newsWidget(
-                    dataSource[index].urlToImage ??
-                        "https://i2-prod.manchestereveningnews.co.uk/incoming/article30217682.ece/ALTERNATES/s1200/0_JS346592155.jpg",
-                    dataSource[index].title ??
-                        "How to watch Fenerbahce vs Manchester United",
-                  );
-                },
-              ),
-            ),
-            SizedBox(
-              height: 100.h,
-            )
-          ],
-        ),
-      ),
+      body: Obx(() {
+        (_controller.isLoading.value)
+            ? context.loaderOverlay.show()
+            : context.loaderOverlay.hide();
+        return (_controller.isLoading.value)
+            ? Container()
+            : SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: dataSource.toList().length,
+                      itemBuilder: (context, index) {
+                        return newsWidget(
+                          dataSource[index].urlToImage ??
+                              "https://i2-prod.manchestereveningnews.co.uk/incoming/article30217682.ece/ALTERNATES/s1200/0_JS346592155.jpg",
+                          dataSource[index].title ??
+                              "How to watch Fenerbahce vs Manchester United",
+                        );
+                      },
+                    ),
+                    SizedBox(
+                      height: 100.h,
+                    )
+                  ],
+                ),
+              );
+      }),
     );
   }
 

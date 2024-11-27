@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:mynewapp/base_screen.dart';
 import 'package:mynewapp/common_resources.dart';
 import 'package:mynewapp/custom_tab_bar.dart';
 import 'package:mynewapp/home/home_controller.dart';
+import 'package:mynewapp/main.dart';
 import 'package:mynewapp/matches_detail/matches_detail.dart';
 import 'package:mynewapp/news_detail/detailNews.dart';
 
@@ -20,7 +22,7 @@ class _LatestState extends State<Home> {
 
   @override
   void initState() {
-    _controller = Get.put(HomeController());
+    _controller = Get.put(HomeController(), permanent: true,);
     super.initState();
   }
 
@@ -32,250 +34,250 @@ class _LatestState extends State<Home> {
         title: safeText(text: 'Tổng hợp', color: Colors.white),
         backgroundColor: commonColor(),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: commonColor(),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Obx(
-                            () => loadImages(
-                              imageUrl: (_controller.articlesList.length > 10)
-                                  ? _controller.articlesList[0].urlToImage ?? ''
-                                  : 'https://img2.thejournal.ie/article/6509629/river/?height=400&version=6509572',
-                              height: 270.h,
-                              width: ScreenUtil().screenWidth,
-                              circularRadius: 10,
+      body: Obx(() {
+        (_controller.isLoading.value)
+            ? context.loaderOverlay.show()
+            : context.loaderOverlay.hide();
+        return (_controller.isLoading.value)
+            ? Container()
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: commonColor(),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                loadImages(
+                                  imageUrl: (_controller.articlesList.length >
+                                          10)
+                                      ? _controller
+                                              .articlesList[0].urlToImage ??
+                                          ''
+                                      : 'https://img2.thejournal.ie/article/6509629/river/?height=400&version=6509572',
+                                  height: 270.h,
+                                  width: ScreenUtil().screenWidth,
+                                  circularRadius: 10,
+                                ),
+                                Text(
+                                  'Phổ biến',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade400,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  (_controller.articlesList.length > 10)
+                                      ? _controller.articlesList[0].title ?? ''
+                                      : 'Former Liverpool boss Jurgen Klopp lands new role as Red Bull’s global head of soccer',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  (_controller.articlesList.length > 10)
+                                      ? _controller
+                                              .articlesList[0].description ??
+                                          ''
+                                      : 'The 57-year-old German will join Red Bull on 1 January, overseeing the company’s network of clubs.',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            'Phổ biến',
-                            style: TextStyle(
-                              color: Colors.grey.shade400,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
+                            Row(
+                              children: [
+                                getNews(
+                                    imageUrl: (_controller.articlesList.length >
+                                            10)
+                                        ? _controller
+                                                .articlesList[1].urlToImage ??
+                                            ''
+                                        : 'https://static.bangkokpost.com/media/content/20241009/c1_2880663_700.jpg',
+                                    type: 'Phổ biến',
+                                    title: (_controller.articlesList.length >
+                                            10)
+                                        ? _controller.articlesList[1].title ??
+                                            ''
+                                        : 'Red Bull hires Juergen Klopp as head of global soccer',
+                                    description: (_controller
+                                                .articlesList.length >
+                                            10)
+                                        ? _controller
+                                                .articlesList[1].description ??
+                                            ''
+                                        : 'Juergen Klopp is joining Red Bull as its &ldquo;head of global soccer&rdquo;, less than six months after stepping down as the coach of the English Premier League club Liverpool FC.'),
+                                getNews(
+                                    imageUrl: (_controller.articlesList.length >
+                                            10)
+                                        ? _controller
+                                                .articlesList[2].urlToImage ??
+                                            ''
+                                        : "https://untold-arsenal.com/wp-content/uploads/2023/07/Football-should-be-an-art.jpg",
+                                    type: 'Phổ biến',
+                                    title: (_controller.articlesList.length >
+                                            10)
+                                        ? _controller.articlesList[2].title ??
+                                            ''
+                                        : 'The key points we will be putting to the Football Regulator on Day 1',
+                                    description: (_controller
+                                                .articlesList.length >
+                                            10)
+                                        ? _controller
+                                                .articlesList[2].description ??
+                                            ''
+                                        : 'The battle lines are drawn, but the Premier League has the winning hand. ManC case against League leaves League free to make two minor amendments By Tony Attwood It is being said in political circles that the bill to introduce the Football Regulator into Engl…'),
+                              ],
                             ),
-                          ),
-                          Obx(
-                            () => Text(
-                              (_controller.articlesList.length > 10)
-                                  ? _controller.articlesList[0].title ?? ''
-                                  : 'Former Liverpool boss Jurgen Klopp lands new role as Red Bull’s global head of soccer',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            SizedBox(
+                              height: 20,
                             ),
-                          ),
-                          Obx(
-                            () => Text(
-                              (_controller.articlesList.length > 10)
-                                  ? _controller.articlesList[0].description ??
-                                      ''
-                                  : 'The 57-year-old German will join Red Bull on 1 January, overseeing the company’s network of clubs.',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          )
+                            moreNews(
+                                title: (_controller.articlesList.length > 10)
+                                    ? _controller.articlesList[3].title ?? ''
+                                    : 'The key points we will be putting to the Football Regulator on Day 1'),
+                            moreNews(
+                                title: (_controller.articlesList.length > 10)
+                                    ? _controller.articlesList[4].title ?? ''
+                                    : 'Ted Lasso Blu-Ray Box Set Gets Significant Price Cut For Prime Big Deal Days'),
+                            moreNews(
+                                title: (_controller.articlesList.length > 10)
+                                    ? _controller.articlesList[5].title ?? ''
+                                    : 'Jack Taylor excited by the prospect of winning first Ireland cap'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0.w),
+                      child: CustomTabView(
+                        height: 900.h,
+                        tabs: ['Matches', 'League Table'],
+                        tabContents: [
+                          matchesTab(),
+                          standingsTab(),
                         ],
                       ),
-                      Row(
-                        children: [
-                          Obx(
-                            () => getNews(
-                                imageUrl: (_controller.articlesList.length > 10)
-                                    ? _controller.articlesList[1].urlToImage ??
-                                        ''
-                                    : 'https://static.bangkokpost.com/media/content/20241009/c1_2880663_700.jpg',
-                                type: 'Phổ biến',
-                                title: (_controller.articlesList.length > 10)
-                                    ? _controller.articlesList[1].title ?? ''
-                                    : 'Red Bull hires Juergen Klopp as head of global soccer',
-                                description: (_controller.articlesList.length >
-                                        10)
-                                    ? _controller.articlesList[1].description ??
-                                        ''
-                                    : 'Juergen Klopp is joining Red Bull as its &ldquo;head of global soccer&rdquo;, less than six months after stepping down as the coach of the English Premier League club Liverpool FC.'),
-                          ),
-                          Obx(
-                            () => getNews(
-                                imageUrl: (_controller.articlesList.length > 10)
-                                    ? _controller.articlesList[2].urlToImage ??
-                                        ''
-                                    : "https://untold-arsenal.com/wp-content/uploads/2023/07/Football-should-be-an-art.jpg",
-                                type: 'Phổ biến',
-                                title: (_controller.articlesList.length > 10)
-                                    ? _controller.articlesList[2].title ?? ''
-                                    : 'The key points we will be putting to the Football Regulator on Day 1',
-                                description: (_controller.articlesList.length >
-                                        10)
-                                    ? _controller.articlesList[2].description ??
-                                        ''
-                                    : 'The battle lines are drawn, but the Premier League has the winning hand. ManC case against League leaves League free to make two minor amendments By Tony Attwood It is being said in political circles that the bill to introduce the Football Regulator into Engl…'),
-                          ),
-                        ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Column(
+                          children: [
+                            //Logic bấm nút
+
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Man Utd News',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            otherNews(
+                              favImageUrl: (_controller.favTeamNews.length > 3)
+                                  ? _controller.favTeamNews[0].urlToImage ?? ''
+                                  : "https://cdn.mos.cms.futurecdn.net/L8tK8cm8NRPdwNYw9PH5sA-1200-80.jpg",
+                              title: (_controller.favTeamNews.length > 3)
+                                  ? _controller.favTeamNews[0].title ?? ''
+                                  : "‘Liverpool did the same thing to Arsenal in 2001 that Manchester United did to us at Bayern in 1999 – in two moments, we changed the game in our favour’: German defender recalls dramatic FA Cup final victory at the Millennium Stadium",
+                            ),
+
+                            otherNews(
+                              favImageUrl: (_controller.favTeamNews.length > 3)
+                                  ? _controller.favTeamNews[1].urlToImage ?? ''
+                                  : "https://ichef.bbci.co.uk/news/1024/branded_sport/a111/live/83419ef0-871a-11ef-a3e8-b9f29f911fa2.jpg",
+                              title: (_controller.favTeamNews.length > 3)
+                                  ? _controller.favTeamNews[1].title ?? ''
+                                  : "'Why not aim for Champions League?' Liverpool's Bonner",
+                            ),
+
+                            otherNews(
+                              favImageUrl: (_controller.favTeamNews.length > 3)
+                                  ? _controller.favTeamNews[2].urlToImage ?? ''
+                                  : "https://ichef.bbci.co.uk/ace/standard/1024/cpsprodpb/0adb/live/4a04a790-87c9-11ef-b6b0-c9af5f7f16e4.jpg",
+                              title: (_controller.favTeamNews.length > 3)
+                                  ? _controller.favTeamNews[2].title ?? ''
+                                  : "Rooney reflects on pictures from his career",
+                            ),
+
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Tin mới nhất',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            otherNews(
+                              favImageUrl: (_controller.articlesList.length >
+                                      10)
+                                  ? _controller.articlesList[6].urlToImage ?? ''
+                                  : "https://cdn.vox-cdn.com/thumbor/2YQTIGYCTgHgJhj6sWWiwUF1ZEw=/0x247:5138x2937/fit-in/1200x630/cdn.vox-cdn.com/uploads/chorus_asset/file/25670786/2176189832.jpg",
+                              title: (_controller.articlesList.length > 10)
+                                  ? _controller.articlesList[6].title ?? ''
+                                  : "Everton Women vs West Ham United: WSL Match Preview",
+                            ),
+
+                            otherNews(
+                              favImageUrl: (_controller.articlesList.length >
+                                      10)
+                                  ? _controller.articlesList[7].urlToImage ?? ''
+                                  : "https://www.americanbankingnews.com/wp-content/timthumb/timthumb.php?src=https://www.marketbeat.com/logos/kb-home-logo-1200x675.png&w=240&h=240&zc=2",
+                              title: (_controller.articlesList.length > 10)
+                                  ? _controller.articlesList[7].title ?? ''
+                                  : "FY2024 Earnings Forecast for KB Home (NYSE:KBH) Issued By Zacks Research",
+                            ),
+
+                            otherNews(
+                              favImageUrl: (_controller.articlesList.length >
+                                      10)
+                                  ? _controller.articlesList[8].urlToImage ?? ''
+                                  : "https://focus.independent.ie/thumbor/ZhBM2PoIUktnLguQk_6p-y24zXQ=/629x460/smart/prod-mh-ireland/e0dca258-f1c0-4dd3-8c89-3967d9dbca35/28289532-5f7f-4b8f-93e3-8de32aa251ed/GettyImages_1250538383.jpg",
+                              title: (_controller.articlesList.length > 10)
+                                  ? _controller.articlesList[8].title ?? ''
+                                  : "Letters: As election time looms, pensioners will not forget Budget 2025",
+                            ),
+                          ],
+                        ),
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Obx(
-                        () => moreNews(
-                            title: (_controller.articlesList.length > 10)
-                                ? _controller.articlesList[3].title ?? ''
-                                : 'The key points we will be putting to the Football Regulator on Day 1'),
-                      ),
-                      Obx(
-                        () => moreNews(
-                            title: (_controller.articlesList.length > 10)
-                                ? _controller.articlesList[4].title ?? ''
-                                : 'Ted Lasso Blu-Ray Box Set Gets Significant Price Cut For Prime Big Deal Days'),
-                      ),
-                      Obx(
-                        () => moreNews(
-                            title: (_controller.articlesList.length > 10)
-                                ? _controller.articlesList[5].title ?? ''
-                                : 'Jack Taylor excited by the prospect of winning first Ireland cap'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0.w),
-                child: CustomTabView(
-                  height: 900.h,
-                  tabs: ['Matches', 'League Table'],
-                  tabContents: [
-                    matchesTab(),
-                    standingsTab(),
+                    ),
+                    SizedBox(
+                      height: 100,
+                    ),
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
-                  child: Column(
-                    children: [
-                      //Logic bấm nút
-
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Man Utd News',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      Obx(
-                        () => otherNews(
-                          favImageUrl: (_controller.favTeamNews.length > 3)
-                              ? _controller.favTeamNews[0].urlToImage ?? ''
-                              : "https://cdn.mos.cms.futurecdn.net/L8tK8cm8NRPdwNYw9PH5sA-1200-80.jpg",
-                          title: (_controller.favTeamNews.length > 3)
-                              ? _controller.favTeamNews[0].title ?? ''
-                              : "‘Liverpool did the same thing to Arsenal in 2001 that Manchester United did to us at Bayern in 1999 – in two moments, we changed the game in our favour’: German defender recalls dramatic FA Cup final victory at the Millennium Stadium",
-                        ),
-                      ),
-                      Obx(
-                        () => otherNews(
-                          favImageUrl: (_controller.favTeamNews.length > 3)
-                              ? _controller.favTeamNews[1].urlToImage ?? ''
-                              : "https://ichef.bbci.co.uk/news/1024/branded_sport/a111/live/83419ef0-871a-11ef-a3e8-b9f29f911fa2.jpg",
-                          title: (_controller.favTeamNews.length > 3)
-                              ? _controller.favTeamNews[1].title ?? ''
-                              : "'Why not aim for Champions League?' Liverpool's Bonner",
-                        ),
-                      ),
-                      Obx(
-                        () => otherNews(
-                          favImageUrl: (_controller.favTeamNews.length > 3)
-                              ? _controller.favTeamNews[2].urlToImage ?? ''
-                              : "https://ichef.bbci.co.uk/ace/standard/1024/cpsprodpb/0adb/live/4a04a790-87c9-11ef-b6b0-c9af5f7f16e4.jpg",
-                          title: (_controller.favTeamNews.length > 3)
-                              ? _controller.favTeamNews[2].title ?? ''
-                              : "Rooney reflects on pictures from his career",
-                        ),
-                      ),
-
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Tin mới nhất',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Obx(
-                        () => otherNews(
-                          favImageUrl: (_controller.articlesList.length > 10)
-                              ? _controller.articlesList[6].urlToImage ?? ''
-                              : "https://cdn.vox-cdn.com/thumbor/2YQTIGYCTgHgJhj6sWWiwUF1ZEw=/0x247:5138x2937/fit-in/1200x630/cdn.vox-cdn.com/uploads/chorus_asset/file/25670786/2176189832.jpg",
-                          title: (_controller.articlesList.length > 10)
-                              ? _controller.articlesList[6].title ?? ''
-                              : "Everton Women vs West Ham United: WSL Match Preview",
-                        ),
-                      ),
-                      Obx(
-                        () => otherNews(
-                          favImageUrl: (_controller.articlesList.length > 10)
-                              ? _controller.articlesList[7].urlToImage ?? ''
-                              : "https://www.americanbankingnews.com/wp-content/timthumb/timthumb.php?src=https://www.marketbeat.com/logos/kb-home-logo-1200x675.png&w=240&h=240&zc=2",
-                          title: (_controller.articlesList.length > 10)
-                              ? _controller.articlesList[7].title ?? ''
-                              : "FY2024 Earnings Forecast for KB Home (NYSE:KBH) Issued By Zacks Research",
-                        ),
-                      ),
-                      Obx(
-                        () => otherNews(
-                          favImageUrl: (_controller.articlesList.length > 10)
-                              ? _controller.articlesList[8].urlToImage ?? ''
-                              : "https://focus.independent.ie/thumbor/ZhBM2PoIUktnLguQk_6p-y24zXQ=/629x460/smart/prod-mh-ireland/e0dca258-f1c0-4dd3-8c89-3967d9dbca35/28289532-5f7f-4b8f-93e3-8de32aa251ed/GettyImages_1250538383.jpg",
-                          title: (_controller.articlesList.length > 10)
-                              ? _controller.articlesList[8].title ?? ''
-                              : "Letters: As election time looms, pensioners will not forget Budget 2025",
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 100,
-              ),
-            ],
-          ),
-        ),
-      ),
+              );
+      }),
     );
   }
 
@@ -409,7 +411,7 @@ class _LatestState extends State<Home> {
               child: Center(
                 child: Obx(
                   () => Text(
-                    'Matchweek ${_controller.onlyRoundNumber.value}',
+                    'Matchweek ${_controller.round.value}',
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

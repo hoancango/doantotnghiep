@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:mynewapp/base_screen.dart';
 import 'package:mynewapp/fixtures/matches_controller.dart';
 
@@ -20,7 +21,7 @@ class _FixturesState extends State<Fixtures> {
 
   @override
   void initState() {
-    _controller = Get.put(MatchesController());
+    _controller = Get.put(MatchesController(), permanent: true,);
     selectedLeague.value = leagueLabels[0];
     super.initState();
   }
@@ -69,169 +70,74 @@ class _FixturesState extends State<Fixtures> {
         ),
         backgroundColor: commonColor(),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Container(
-              //   height: 50.h,
-              //   child: ListView.builder(
-              //     shrinkWrap: true,
-              //     scrollDirection: Axis.horizontal,
-              //     itemCount: 5,
-              //     itemBuilder: (context, index) {
-              //       return Center(child: dateLabel(index));
-              //     },
-              //   ),
-              // ),
-              Obx(
-                () => ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _controller.fixtures.toList().length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final basePath = _controller.fixtures;
-                    bool sameDay = true;
+      body: Obx(() {
+        (_controller.isLoading.value)
+            ? context.loaderOverlay.show()
+            : context.loaderOverlay.hide();
 
-                    if (index > 0) {
-                      String? formerMatchTime = basePath[index].fixture?.date;
-                      String? latterMatchTime =
-                          basePath[index - 1].fixture?.date;
-                      if (formerMatchTime != null && latterMatchTime != null) {
-                        int formerLocalDay = getLocalDay(formerMatchTime);
-                        int latterLocalDay = getLocalDay(latterMatchTime);
-                        sameDay = (formerLocalDay == latterLocalDay);
-                      }
-                    }
+        return (_controller.isLoading.value)
+            ? Container()
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _controller.fixtures.toList().length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final basePath = _controller.fixtures;
+                        bool sameDay = true;
 
-                    return Column(
-                      children: [
-                        if (index == 0 || sameDay == false)
-                          safeText(
-                            text: toLocalTime(
-                              utcString: basePath[index].fixture?.date ??
+                        if (index > 0) {
+                          String? formerMatchTime =
+                              basePath[index].fixture?.date;
+                          String? latterMatchTime =
+                              basePath[index - 1].fixture?.date;
+                          if (formerMatchTime != null &&
+                              latterMatchTime != null) {
+                            int formerLocalDay = getLocalDay(formerMatchTime);
+                            int latterLocalDay = getLocalDay(latterMatchTime);
+                            sameDay = (formerLocalDay == latterLocalDay);
+                          }
+                        }
+
+                        return Column(
+                          children: [
+                            if (index == 0 || sameDay == false)
+                              safeText(
+                                text: toLocalTime(
+                                  utcString: basePath[index].fixture?.date ??
+                                      "2024-10-19T14:00:00Z",
+                                  byWeekday: true,
+                                ),
+                              ),
+                            getMatches(
+                              homeTeamName: basePath[index].teams?.home?.name ??
+                                  "Ipswich Town",
+                              awayTeamName: basePath[index].teams?.away?.name ??
+                                  "Everton",
+                              homeTeamFlagUrl: basePath[index]
+                                      .teams
+                                      ?.home
+                                      ?.logo ??
+                                  "https://crests.football-data.org/349.png",
+                              utcTime: basePath[index].fixture?.date ??
                                   "2024-10-19T14:00:00Z",
-                              byWeekday: true,
+                              awayTeamFlagUrl:
+                                  basePath[index].teams?.away?.logo ??
+                                      "https://crests.football-data.org/62.png",
                             ),
-                          ),
-                        getMatches(
-                          homeTeamName: basePath[index].teams?.home?.name ??
-                              "Ipswich Town",
-                          awayTeamName:
-                              basePath[index].teams?.away?.name ?? "Everton",
-                          homeTeamFlagUrl: basePath[index].teams?.home?.logo ??
-                              "https://crests.football-data.org/349.png",
-                          utcTime: basePath[index].fixture?.date ??
-                              "2024-10-19T14:00:00Z",
-                          awayTeamFlagUrl: basePath[index].teams?.away?.logo ??
-                              "https://crests.football-data.org/62.png",
-                        ),
-                      ],
-                    );
-                  },
+                          ],
+                        );
+                      },
+                    ),
+                    SizedBox(
+                      height: 100.h,
+                    ),
+                  ],
                 ),
-              ),
-
-              // Padding(
-              //   padding: EdgeInsets.all(8.0.w),
-              //   child: Container(
-              //     decoration: BoxDecoration(
-              //       color: Colors.white,
-              //       borderRadius: BorderRadius.circular(10),
-              //     ),
-              //     clipBehavior: Clip.antiAlias,
-              //     child: Column(
-              //       children: [
-              //         leagueTitle("https://crests.football-data.org/CL.png",
-              //             "UEFA Champions League"),
-              //         SizedBox(
-              //           height: 10.h,
-              //         ),
-              //         getMatches(
-              //           homeTeamName: "Atalanta",
-              //           awayTeamName: "Celtic",
-              //           homeTeamFlagUrl:
-              //               "https://crests.football-data.org/102.png",
-              //           utcTime: "2024-10-23T16:45:00Z",
-              //           awayTeamFlagUrl:
-              //               "https://crests.football-data.org/732.png",
-              //         ),
-              //         getMatches(
-              //           homeTeamName: "Brest",
-              //           awayTeamName: "Leverkusen",
-              //           homeTeamFlagUrl:
-              //               "https://crests.football-data.org/512.png",
-              //           utcTime: "2024-10-23T19:00:00Z",
-              //           awayTeamFlagUrl:
-              //               "https://crests.football-data.org/3.png",
-              //         ),
-              //         getMatches(
-              //           homeTeamName: "Man City",
-              //           awayTeamName: "Sparta Praha",
-              //           homeTeamFlagUrl:
-              //               "https://crests.football-data.org/65.png",
-              //           utcTime: "2024-10-23T19:00:00Z",
-              //           awayTeamFlagUrl:
-              //               "https://crests.football-data.org/907.png",
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: EdgeInsets.all(8.0.w),
-              //   child: Container(
-              //     decoration: BoxDecoration(
-              //       color: Colors.white,
-              //       borderRadius: BorderRadius.circular(10),
-              //     ),
-              //     clipBehavior: Clip.antiAlias,
-              //     child: Column(
-              //       children: [
-              //         leagueTitle("https://crests.football-data.org/ELC.png",
-              //             "Championship"),
-              //         SizedBox(
-              //           height: 10.h,
-              //         ),
-              //         getMatches(
-              //           homeTeamName: "Middlesbrough",
-              //           awayTeamName: "Sheffield Utd",
-              //           homeTeamFlagUrl:
-              //               "https://crests.football-data.org/343.png",
-              //           utcTime: "2024-10-23T16:45:00Z",
-              //           awayTeamFlagUrl:
-              //               "https://crests.football-data.org/356.png",
-              //         ),
-              //         getMatches(
-              //           homeTeamName: "Hull City",
-              //           awayTeamName: "Burnley",
-              //           homeTeamFlagUrl:
-              //               "https://crests.football-data.org/322.png",
-              //           utcTime: "2024-10-23T19:00:00Z",
-              //           awayTeamFlagUrl:
-              //               "https://crests.football-data.org/328.png",
-              //         ),
-              //         getMatches(
-              //           homeTeamName: "Millwall",
-              //           awayTeamName: "Plymouth Arg",
-              //           homeTeamFlagUrl:
-              //               "https://crests.football-data.org/384.png",
-              //           utcTime: "2024-10-23T19:00:00Z",
-              //           awayTeamFlagUrl:
-              //               "https://crests.football-data.org/1138.png",
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-
-              SizedBox(
-                height: 100.h,
-              ),
-            ],
-          ),
-        ),
-      ),
+              );
+      }),
     );
   }
 

@@ -12,15 +12,18 @@ class HomeController extends GetxController {
   final RapidFootballService rapidService = RapidFootballService();
   final FootOrgApiService fotOrgService = FootOrgApiService();
   String currentRound = '';
-  RxString onlyRoundNumber = ''.obs;
+  RxString round = ''.obs;
   RxList<Articles> articlesList = <Articles>[].obs;
   RxList<Articles> favTeamNews = <Articles>[].obs;
   RxList<TotalFixtures> fixturesList = <TotalFixtures>[].obs;
   RxList<Table> standingsList = <Table>[].obs;
   RxList<Table> shortList = <Table>[].obs;
+  RxBool isLoading = false.obs;
 
   @override
   Future<void> onInit() async {
+
+    isLoading.value = true;
     await getPopularNews();
     await getFavTeamNews();
     await getCurrentRound();
@@ -31,7 +34,9 @@ class HomeController extends GetxController {
     }else{
       shortList.addAll(standingsList);
     }
-    onlyRoundNumber.value = currentRound.replaceAll(RegExp(r'[^0-9]'), '');
+    round.value = currentRound.replaceAll(RegExp(r'[^0-9]'), '');
+
+    isLoading.value = false;
     super.onInit();
   }
   //make loading screen

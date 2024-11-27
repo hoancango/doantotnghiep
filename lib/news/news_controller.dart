@@ -10,9 +10,11 @@ class NewsController extends GetxController {
   RxList<Articles> shortPlNews = <Articles>[].obs;
   RxList<Articles> shortFavNews = <Articles>[].obs;
   RxList<Articles> shortTransferNews = <Articles>[].obs;
+  RxBool isLoading = false.obs;
 
   @override
   Future<void> onInit() async {
+    isLoading.value = true;
     await getNewsByPublishedAt(
       'premier league',
       plNews,
@@ -28,6 +30,7 @@ class NewsController extends GetxController {
       transferNews,
       shortTransferNews,
     );
+    isLoading.value = false;
 
     super.onInit();
   }
