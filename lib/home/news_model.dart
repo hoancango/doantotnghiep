@@ -1,27 +1,27 @@
-class NewsDataTotal {
+class News {
   String? status;
   int? totalResults;
   List<Articles>? articles;
 
-  NewsDataTotal({this.status, this.totalResults, this.articles});
+  News({this.status, this.totalResults, this.articles});
 
-  NewsDataTotal.fromJson(Map<String, dynamic> json) {
+  News.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     totalResults = json['totalResults'];
     if (json['articles'] != null) {
       articles = <Articles>[];
       json['articles'].forEach((v) {
-        articles?.add(Articles.fromJson(v));
+        articles!.add(new Articles.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    data['totalResults'] = totalResults;
-    if (articles != null) {
-      data['articles'] = articles?.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['totalResults'] = this.totalResults;
+    if (this.articles != null) {
+      data['articles'] = this.articles!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -39,17 +39,17 @@ class Articles {
 
   Articles(
       {this.source,
-        this.author,
-        this.title,
-        this.description,
-        this.url,
-        this.urlToImage,
-        this.publishedAt,
-        this.content});
+      this.author,
+      this.title,
+      this.description,
+      this.url,
+      this.urlToImage,
+      this.publishedAt,
+      this.content});
 
   Articles.fromJson(Map<String, dynamic> json) {
     source =
-    json['source'] != null ? Source.fromJson(json['source']) : null;
+        json['source'] != null ? new Source.fromJson(json['source']) : null;
     author = json['author'];
     title = json['title'];
     description = json['description'];
@@ -72,6 +72,16 @@ class Articles {
     data['publishedAt'] = this.publishedAt;
     data['content'] = this.content;
     return data;
+  }
+
+  bool hasNullValues() {
+    return author == null ||
+        title == null ||
+        description == null ||
+        url == null ||
+        urlToImage == null ||
+        publishedAt == null ||
+        content == null;
   }
 }
 
