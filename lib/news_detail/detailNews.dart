@@ -7,11 +7,15 @@ class DetailNews extends StatefulWidget {
       {super.key,
       required this.newsTitle,
       required this.imageUrl,
-      required this.content});
+      required this.content,
+      required this.otherInfo,
+      required this.description});
 
   final String newsTitle;
   final String imageUrl;
   final String content;
+  final String otherInfo;
+  final String description;
 
   @override
   State<DetailNews> createState() => _DetailNewsState();
@@ -29,25 +33,49 @@ class _DetailNewsState extends State<DetailNews> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(10.0.w),
+          padding: EdgeInsets.all(8.0.w),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 10,),
               loadImages(
                 imageUrl: widget.imageUrl,
                 height: 300.h,
                 width: MediaQuery.sizeOf(context).width,
               ),
               safeText(
+                  text: widget.otherInfo, color: Colors.grey, fontSize: 14.sp),
+              safeText(
                 text: widget.newsTitle,
                 isBold: true,
                 fontSize: 25.sp,
                 safeEnable: false,
               ),
+              Text(
+                widget.description,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
               Text(widget.content),
+
+              const SizedBox(
+                height: 20,
+              ),
               Text(widget.content),
+
+              const SizedBox(
+                height: 20,
+              ),
               Text(widget.content),
-              Text(widget.content),
-              Text(widget.content),
+
+              const SizedBox(
+                height: 50,
+              ),
+
             ],
           ),
         ),

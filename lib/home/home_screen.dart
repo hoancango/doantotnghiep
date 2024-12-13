@@ -5,10 +5,13 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:mynewapp/base_screen.dart';
 import 'package:mynewapp/common_resources.dart';
 import 'package:mynewapp/custom_tab_bar.dart';
+import 'package:mynewapp/fixtures/fixtures.dart';
 import 'package:mynewapp/home/home_controller.dart';
 import 'package:mynewapp/main.dart';
 import 'package:mynewapp/matches_detail/matches_detail.dart';
+import 'package:mynewapp/news/news_screen.dart';
 import 'package:mynewapp/news_detail/detailNews.dart';
+import 'package:mynewapp/standings/standings.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -22,25 +25,28 @@ class _LatestState extends State<Home> {
 
   @override
   void initState() {
-    _controller = Get.put(HomeController(), permanent: true,);
+    _controller = (Get.isRegistered<HomeController>())
+        ? Get.find<HomeController>()
+        : Get.put(HomeController(), permanent: true);
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      label: 'Tổng hợp',
+      label: 'Collection'.tr,
       appBar: AppBar(
-        title: safeText(text: 'Tổng hợp', color: Colors.white),
+        title: safeText(text: 'Collection'.tr, color: Colors.white),
         backgroundColor: commonColor(),
       ),
       body: Obx(() {
         (_controller.isLoading.value)
             ? context.loaderOverlay.show()
             : context.loaderOverlay.hide();
-        return (_controller.isLoading.value)
-            ? Container()
-            : SingleChildScrollView(
+        return (_controller.isLoading.value == false &&
+                _controller.isError.value == false)
+            ? SingleChildScrollView(
                 child: Column(
                   children: [
                     Container(
@@ -51,110 +57,25 @@ class _LatestState extends State<Home> {
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                loadImages(
-                                  imageUrl: (_controller.articlesList.length >
-                                          10)
-                                      ? _controller
-                                              .articlesList[0].urlToImage ??
-                                          ''
-                                      : 'https://img2.thejournal.ie/article/6509629/river/?height=400&version=6509572',
-                                  height: 270.h,
-                                  width: ScreenUtil().screenWidth,
-                                  circularRadius: 10,
-                                ),
-                                Text(
-                                  'Phổ biến',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade400,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  (_controller.articlesList.length > 10)
-                                      ? _controller.articlesList[0].title ?? ''
-                                      : 'Former Liverpool boss Jurgen Klopp lands new role as Red Bull’s global head of soccer',
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  (_controller.articlesList.length > 10)
-                                      ? _controller
-                                              .articlesList[0].description ??
-                                          ''
-                                      : 'The 57-year-old German will join Red Bull on 1 January, overseeing the company’s network of clubs.',
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                getNews(
-                                    imageUrl: (_controller.articlesList.length >
-                                            10)
-                                        ? _controller
-                                                .articlesList[1].urlToImage ??
-                                            ''
-                                        : 'https://static.bangkokpost.com/media/content/20241009/c1_2880663_700.jpg',
-                                    type: 'Phổ biến',
-                                    title: (_controller.articlesList.length >
-                                            10)
-                                        ? _controller.articlesList[1].title ??
-                                            ''
-                                        : 'Red Bull hires Juergen Klopp as head of global soccer',
-                                    description: (_controller
-                                                .articlesList.length >
-                                            10)
-                                        ? _controller
-                                                .articlesList[1].description ??
-                                            ''
-                                        : 'Juergen Klopp is joining Red Bull as its &ldquo;head of global soccer&rdquo;, less than six months after stepping down as the coach of the English Premier League club Liverpool FC.'),
-                                getNews(
-                                    imageUrl: (_controller.articlesList.length >
-                                            10)
-                                        ? _controller
-                                                .articlesList[2].urlToImage ??
-                                            ''
-                                        : "https://untold-arsenal.com/wp-content/uploads/2023/07/Football-should-be-an-art.jpg",
-                                    type: 'Phổ biến',
-                                    title: (_controller.articlesList.length >
-                                            10)
-                                        ? _controller.articlesList[2].title ??
-                                            ''
-                                        : 'The key points we will be putting to the Football Regulator on Day 1',
-                                    description: (_controller
-                                                .articlesList.length >
-                                            10)
-                                        ? _controller
-                                                .articlesList[2].description ??
-                                            ''
-                                        : 'The battle lines are drawn, but the Premier League has the winning hand. ManC case against League leaves League free to make two minor amendments By Tony Attwood It is being said in political circles that the bill to introduce the Football Regulator into Engl…'),
-                              ],
-                            ),
+                            topNews(),
+                            secondTopNews(),
                             SizedBox(
                               height: 20,
                             ),
                             moreNews(
-                                title: (_controller.articlesList.length > 10)
-                                    ? _controller.articlesList[3].title ?? ''
-                                    : 'The key points we will be putting to the Football Regulator on Day 1'),
+                              index: 3,
+                              title: (_controller.articlesList.length > 10)
+                                  ? _controller.articlesList[3].title ?? ''
+                                  : 'The key points we will be putting to the Football Regulator on Day 1',
+                            ),
                             moreNews(
-                                title: (_controller.articlesList.length > 10)
-                                    ? _controller.articlesList[4].title ?? ''
-                                    : 'Ted Lasso Blu-Ray Box Set Gets Significant Price Cut For Prime Big Deal Days'),
+                              index: 4,
+                              title: (_controller.articlesList.length > 10)
+                                  ? _controller.articlesList[4].title ?? ''
+                                  : 'Ted Lasso Blu-Ray Box Set Gets Significant Price Cut For Prime Big Deal Days',
+                            ),
                             moreNews(
+                                index: 5,
                                 title: (_controller.articlesList.length > 10)
                                     ? _controller.articlesList[5].title ?? ''
                                     : 'Jack Taylor excited by the prospect of winning first Ireland cap'),
@@ -168,8 +89,9 @@ class _LatestState extends State<Home> {
                     Padding(
                       padding: EdgeInsets.all(8.0.w),
                       child: CustomTabView(
-                        height: 900.h,
-                        tabs: ['Matches', 'League Table'],
+                        tabsHeights: [900.h, 500.h],
+                        tabs: ['Matches'.tr, 'League Table'.tr],
+                        physics: const NeverScrollableScrollPhysics(),
                         tabContents: [
                           matchesTab(),
                           standingsTab(),
@@ -188,49 +110,78 @@ class _LatestState extends State<Home> {
                               alignment: Alignment.centerLeft,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Man Utd News',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.star, color: Colors.yellow,),
+                                    const SizedBox(width: 5,),
+                                    Text(
+                                      "${_controller.favTitle ?? 'Favourite'.tr}",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
 
-                            otherNews(
-                              favImageUrl: (_controller.favTeamNews.length > 3)
-                                  ? _controller.favTeamNews[0].urlToImage ?? ''
-                                  : "https://cdn.mos.cms.futurecdn.net/L8tK8cm8NRPdwNYw9PH5sA-1200-80.jpg",
-                              title: (_controller.favTeamNews.length > 3)
-                                  ? _controller.favTeamNews[0].title ?? ''
-                                  : "‘Liverpool did the same thing to Arsenal in 2001 that Manchester United did to us at Bayern in 1999 – in two moments, we changed the game in our favour’: German defender recalls dramatic FA Cup final victory at the Millennium Stadium",
-                            ),
+                            // otherNews(
+                            //   isFavNews: true,
+                            //   index: 0,
+                            //   favImageUrl: (_controller.favTeamNews.length > 3)
+                            //       ? _controller.favTeamNews[0].urlToImage ?? ''
+                            //       : "https://cdn.mos.cms.futurecdn.net/L8tK8cm8NRPdwNYw9PH5sA-1200-80.jpg",
+                            //   title: (_controller.favTeamNews.length > 3)
+                            //       ? _controller.favTeamNews[0].title ?? ''
+                            //       : "‘Liverpool did the same thing to Arsenal in 2001 that Manchester United did to us at Bayern in 1999 – in two moments, we changed the game in our favour’: German defender recalls dramatic FA Cup final victory at the Millennium Stadium",
+                            // ),
+                            //
+                            // otherNews(
+                            //   isFavNews: true,
+                            //   index: 1,
+                            //   favImageUrl: (_controller.favTeamNews.length > 3)
+                            //       ? _controller.favTeamNews[1].urlToImage ?? ''
+                            //       : "https://ichef.bbci.co.uk/news/1024/branded_sport/a111/live/83419ef0-871a-11ef-a3e8-b9f29f911fa2.jpg",
+                            //   title: (_controller.favTeamNews.length > 3)
+                            //       ? _controller.favTeamNews[1].title ?? ''
+                            //       : "'Why not aim for Champions League?' Liverpool's Bonner",
+                            // ),
+                            //
+                            // otherNews(
+                            //   isFavNews: true,
+                            //   index: 2,
+                            //   favImageUrl: (_controller.favTeamNews.length > 3)
+                            //       ? _controller.favTeamNews[2].urlToImage ?? ''
+                            //       : "https://ichef.bbci.co.uk/ace/standard/1024/cpsprodpb/0adb/live/4a04a790-87c9-11ef-b6b0-c9af5f7f16e4.jpg",
+                            //   title: (_controller.favTeamNews.length > 3)
+                            //       ? _controller.favTeamNews[2].title ?? ''
+                            //       : "Rooney reflects on pictures from his career",
+                            // ),
 
-                            otherNews(
-                              favImageUrl: (_controller.favTeamNews.length > 3)
-                                  ? _controller.favTeamNews[1].urlToImage ?? ''
-                                  : "https://ichef.bbci.co.uk/news/1024/branded_sport/a111/live/83419ef0-871a-11ef-a3e8-b9f29f911fa2.jpg",
-                              title: (_controller.favTeamNews.length > 3)
-                                  ? _controller.favTeamNews[1].title ?? ''
-                                  : "'Why not aim for Champions League?' Liverpool's Bonner",
-                            ),
-
-                            otherNews(
-                              favImageUrl: (_controller.favTeamNews.length > 3)
-                                  ? _controller.favTeamNews[2].urlToImage ?? ''
-                                  : "https://ichef.bbci.co.uk/ace/standard/1024/cpsprodpb/0adb/live/4a04a790-87c9-11ef-b6b0-c9af5f7f16e4.jpg",
-                              title: (_controller.favTeamNews.length > 3)
-                                  ? _controller.favTeamNews[2].title ?? ''
-                                  : "Rooney reflects on pictures from his career",
-                            ),
+                            ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: (_controller.favTeamNews.length > 3)
+                                    ? 3
+                                    : _controller.favTeamNews.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final basePath =
+                                      _controller.favTeamNews[index];
+                                  return otherNews(
+                                      index: index,
+                                      favImageUrl: basePath.urlToImage ??
+                                          "https://ichef.bbci.co.uk/ace/standard/1024/cpsprodpb/0adb/live/4a04a790-87c9-11ef-b6b0-c9af5f7f16e4.jpg",
+                                      title: basePath.title ??
+                                          "Rooney reflects on pictures from his career");
+                                }),
 
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Tin mới nhất',
+                                  'Other news'.tr,
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -239,6 +190,7 @@ class _LatestState extends State<Home> {
                               ),
                             ),
                             otherNews(
+                              index: 6,
                               favImageUrl: (_controller.articlesList.length >
                                       10)
                                   ? _controller.articlesList[6].urlToImage ?? ''
@@ -249,6 +201,7 @@ class _LatestState extends State<Home> {
                             ),
 
                             otherNews(
+                              index: 7,
                               favImageUrl: (_controller.articlesList.length >
                                       10)
                                   ? _controller.articlesList[7].urlToImage ?? ''
@@ -259,6 +212,7 @@ class _LatestState extends State<Home> {
                             ),
 
                             otherNews(
+                              index: 8,
                               favImageUrl: (_controller.articlesList.length >
                                       10)
                                   ? _controller.articlesList[8].urlToImage ?? ''
@@ -276,22 +230,125 @@ class _LatestState extends State<Home> {
                     ),
                   ],
                 ),
-              );
+              )
+            : Container();
       }),
     );
   }
 
-  Widget getNews(
-      {required String imageUrl,
-      required String type,
-      required String title,
-      required String description}) {
+  Widget topNews() {
+    final basePath = _controller.articlesList;
+    return InkWell(
+      onTap: () {
+        Get.to(
+          DetailNews(
+            newsTitle: basePath[0].title ?? '',
+            imageUrl: basePath[0].urlToImage ?? '',
+            content: basePath[0].content ?? '',
+            otherInfo: 'Popular'.tr,
+            description: basePath[0].description ?? '',
+          ),
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          loadImages(
+            imageUrl: (basePath.length > 10)
+                ? basePath[0].urlToImage ?? ''
+                : 'https://img2.thejournal.ie/article/6509629/river/?height=400&version=6509572',
+            height: 270.h,
+            width: ScreenUtil().screenWidth,
+            circularRadius: 10,
+          ),
+          Text(
+            'Popular'.tr,
+            style: TextStyle(
+              color: Colors.grey.shade400,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            (basePath.length > 10)
+                ? basePath[0].title ?? ''
+                : 'Former Liverpool boss Jurgen Klopp lands new role as Red Bull’s global head of soccer',
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            (basePath.length > 10)
+                ? basePath[0].description ?? ''
+                : 'The 57-year-old German will join Red Bull on 1 January, overseeing the company’s network of clubs.',
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget secondTopNews() {
+    return Row(
+      children: [
+        getNews(
+            imageUrl: (_controller.articlesList.length > 10)
+                ? _controller.articlesList[1].urlToImage ?? ''
+                : 'https://static.bangkokpost.com/media/content/20241009/c1_2880663_700.jpg',
+            type: 'Popular'.tr,
+            title: (_controller.articlesList.length > 10)
+                ? _controller.articlesList[1].title ?? ''
+                : 'Red Bull hires Juergen Klopp as head of global soccer',
+            description: (_controller.articlesList.length > 10)
+                ? _controller.articlesList[1].description ?? ''
+                : 'Juergen Klopp is joining Red Bull as its &ldquo;head of global soccer&rdquo;, less than six months after stepping down as the coach of the English Premier League club Liverpool FC.',
+            content: (_controller.articlesList.length > 10)
+                ? _controller.articlesList[1].content ?? ''
+                : ''),
+        getNews(
+            imageUrl: (_controller.articlesList.length > 10)
+                ? _controller.articlesList[2].urlToImage ?? ''
+                : "https://untold-arsenal.com/wp-content/uploads/2023/07/Football-should-be-an-art.jpg",
+            type: 'Popular'.tr,
+            title: (_controller.articlesList.length > 10)
+                ? _controller.articlesList[2].title ?? ''
+                : 'The key points we will be putting to the Football Regulator on Day 1',
+            description: (_controller.articlesList.length > 10)
+                ? _controller.articlesList[2].description ?? ''
+                : 'The battle lines are drawn, but the Premier League has the winning hand. ManC case against League leaves League free to make two minor amendments By Tony Attwood It is being said in political circles that the bill to introduce the Football Regulator into Engl…',
+            content: (_controller.articlesList.length > 10)
+                ? _controller.articlesList[1].content ?? ''
+                : ''),
+      ],
+    );
+  }
+
+  Widget getNews({
+    required String imageUrl,
+    required String type,
+    required String title,
+    required String description,
+    required String content,
+  }) {
     return Expanded(
       flex: 1,
       child: InkWell(
         onTap: () {
           Get.to(DetailNews(
-              newsTitle: title, imageUrl: imageUrl, content: description));
+            newsTitle: title,
+            imageUrl: imageUrl,
+            content: content,
+            otherInfo: 'Popular'.tr,
+            description: description,
+          ));
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -337,59 +394,92 @@ class _LatestState extends State<Home> {
     );
   }
 
-  Widget moreNews({required String title}) {
+  Widget moreNews({required String title, required int index}) {
+    final basePath = _controller.articlesList;
     return Padding(
-      padding: const EdgeInsets.all(3.0),
-      child: Row(
-        children: [
-          Icon(
-            Icons.newspaper,
-            color: Colors.white,
-          ),
-          Expanded(
-            child: Text(
-              title,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              style: TextStyle(
-                color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 3.0),
+      child: InkWell(
+        onTap: () {
+          Get.to(DetailNews(
+            newsTitle: title,
+            imageUrl: basePath[index].urlToImage ?? '',
+            content: basePath[index].content ?? '',
+            otherInfo: 'Popular'.tr,
+            description: basePath[index].description ?? '',
+          ));
+        },
+        child: Row(
+          children: [
+            Icon(
+              Icons.newspaper,
+              color: Colors.white,
+            ),
+            Expanded(
+              child: Text(
+                title,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget otherNews({
+    required int index,
+    bool isFavNews = false,
     required String favImageUrl,
     required String title,
   }) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 1,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: loadImages(
-              imageUrl: favImageUrl,
-              height: 50,
-              width: 50,
-              circularRadius: 10,
+    final basePath = _controller.articlesList;
+    final favPath = _controller.favTeamNews;
+    return InkWell(
+      onTap: () {
+        Get.to(DetailNews(
+          newsTitle: title,
+          imageUrl: (isFavNews == true)
+              ? favPath[index].urlToImage ?? ''
+              : basePath[index].urlToImage ?? '',
+          content: (isFavNews == true)
+              ? favPath[index].content ?? ''
+              : basePath[index].content ?? '',
+          otherInfo: 'Popular'.tr,
+          description: (isFavNews == true)
+              ? favPath[index].description ?? ''
+              : basePath[index].description ?? '',
+        ));
+      },
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: loadImages(
+                imageUrl: favImageUrl,
+                height: 50,
+                width: 50,
+                circularRadius: 10,
+              ),
             ),
           ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Text(
-            title,
-            style: const TextStyle(
-              overflow: TextOverflow.ellipsis,
+          Expanded(
+            flex: 3,
+            child: Text(
+              title,
+              style: const TextStyle(
+                overflow: TextOverflow.ellipsis,
+              ),
+              maxLines: 2,
             ),
-            maxLines: 2,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -411,7 +501,7 @@ class _LatestState extends State<Home> {
               child: Center(
                 child: Obx(
                   () => Text(
-                    'Matchweek ${_controller.round.value}',
+                    '${'Matchweek'.tr} ${_controller.round.value}',
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -423,19 +513,31 @@ class _LatestState extends State<Home> {
             //Text('League Table'),
             // if touch league table button
           ),
-          Text('Thời gian hiển thị theo khu vực của bạn'),
+          Text('All times shown are your local time'.tr),
           // Text('Thứ 7 ngày 19 tháng 10'),
+
           Obx(
             () => ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _controller.fixturesList.length,
               itemBuilder: (BuildContext context, int index) {
+                final basePath = _controller.fixturesList;
+                bool sameDay = true;
+
+                if (index > 0) {
+                  String? formerMatchTime = basePath[index].fixture?.date;
+                  String? latterMatchTime = basePath[index - 1].fixture?.date;
+                  if (formerMatchTime != null && latterMatchTime != null) {
+                    int formerLocalDay = getLocalDay(formerMatchTime);
+                    int latterLocalDay = getLocalDay(latterMatchTime);
+                    sameDay = (formerLocalDay == latterLocalDay);
+                  }
+                }
+
                 return Column(
                   children: [
-                    if (index > 0 &&
-                        _controller.fixturesList[index].fixture?.date !=
-                            _controller.fixturesList[index - 1].fixture?.date)
+                    if (index == 0 || sameDay == false)
                       safeText(
                         text: toLocalTime(
                           utcString:
@@ -444,6 +546,9 @@ class _LatestState extends State<Home> {
                           byWeekday: true,
                         ),
                       ),
+                    const SizedBox(
+                      height: 3.0,
+                    ),
                     getMatches(
                       homeTeamName:
                           _controller.fixturesList[index].teams?.home?.name ??
@@ -473,19 +578,31 @@ class _LatestState extends State<Home> {
                 width: 1.0,
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Xem đầy đủ số trận'),
-                  SizedBox(
-                    width: 10,
+            child: InkWell(
+              onTap: () {},
+              child: InkWell(
+                onTap: () {
+                  Get.off(const Fixtures());
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('View all fixtures'.tr),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Icon(Icons.arrow_right_alt),
+                    ],
                   ),
-                  Icon(Icons.arrow_right_alt),
-                ],
+                ),
               ),
             ),
+          ),
+
+          const SizedBox(
+            height: 20,
           ),
         ],
       ),
@@ -520,81 +637,31 @@ class _LatestState extends State<Home> {
             //Text('League Table'),
             // if touch league table button
           ),
-
-          standings(6),
-
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       flex: 1,
-          //       child: Center(child: Text('Xếp hạng')),
-          //     ),
-          //     Expanded(
-          //       flex: 2,
-          //       child: Text('CLB'),
-          //     ),
-          //     Expanded(
-          //       flex: 1,
-          //       child: Center(child: Text('Số trận')),
-          //     ),
-          //     Expanded(
-          //       flex: 1,
-          //       child: Center(child: Text('Hiệu số')),
-          //     ),
-          //     Expanded(
-          //       flex: 1,
-          //       child: Center(child: Text('Điểm')),
-          //     ),
-          //   ],
-          // ),
-          // ListView(
-          //   shrinkWrap: true,
-          //   physics: const NeverScrollableScrollPhysics(),
-          //   children: [
-          //     standingsRow(
-          //       position: 1,
-          //       crest: 'https://crests.football-data.org/64.png',
-          //       shortName: 'Liverpool',
-          //       playedGames: 7,
-          //       goalDifference: 11,
-          //       points: 18,
-          //     ),
-          //     standingsRow(
-          //       position: 2,
-          //       crest: "https://crests.football-data.org/65.png",
-          //       shortName: 'Man City',
-          //       playedGames: 7,
-          //       goalDifference: 9,
-          //       points: 17,
-          //     ),
-          //     standingsRow(
-          //       position: 3,
-          //       crest: "https://crests.football-data.org/57.png",
-          //       shortName: "Arsenal",
-          //       playedGames: 7,
-          //       goalDifference: 9,
-          //       points: 17,
-          //     ),
-          //   ],
-          // ),
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(
-                  color: Colors.grey.shade400,
-                  width: 1.0,
-                )),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('View full table'),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Icon(Icons.arrow_right_alt),
-                ],
+          standings(),
+          InkWell(
+            onTap: () {
+              Get.to(
+                  Standings(standingsData: _controller.standingsList.toList()));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
+                    color: Colors.grey.shade400,
+                    width: 1.0,
+                  )),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('View full table'.tr),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Icon(Icons.arrow_right_alt),
+                  ],
+                ),
               ),
             ),
           ),
@@ -632,9 +699,7 @@ class _LatestState extends State<Home> {
       children: [
         if (position == 1)
           Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-            ),
+            decoration: BoxDecoration(),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 8.0.h),
               child: Row(
@@ -775,7 +840,7 @@ class _LatestState extends State<Home> {
     );
   }
 
-  Widget standings(int teamNumbers) {
+  Widget standings() {
     return Obx(
       () => ListView.builder(
           shrinkWrap: true,
@@ -810,5 +875,11 @@ class _LatestState extends State<Home> {
             );
           }),
     );
+  }
+
+  int getLocalDay(String utcString) {
+    DateTime utcTime = DateTime.parse(utcString);
+    DateTime localTime = utcTime.toLocal();
+    return localTime.day;
   }
 }

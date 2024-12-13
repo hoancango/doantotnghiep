@@ -52,27 +52,28 @@ class _BaseScreenState extends State<BaseScreen> {
               child: Row(
                 children: [
                   navigationButton(
-                    'Tổng hợp',
+                    'Collection'.tr,
+                    // 'Tổng hợp',
                     ImagesAssets.collection,
                     const Home(),
                   ),
                   navigationButton(
-                    'Tin tức',
+                    'News'.tr,
                     ImagesAssets.news,
                     const NewsScreen(),
                   ),
                   navigationButton(
-                    'Lịch đấu',
+                    'Fixtures'.tr,
                     ImagesAssets.cup,
                     const Fixtures(),
                   ),
                   navigationButton(
-                    'Theo dõi',
+                    'Following'.tr,
                     ImagesAssets.following,
                     const Favourite(),
                   ),
                   navigationButton(
-                    'Cài đặt',
+                    'Setting'.tr,
                     ImagesAssets.menu,
                     const Setting(),
                   ),

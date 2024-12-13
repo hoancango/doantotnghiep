@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:mynewapp/base_screen.dart';
 import 'package:mynewapp/common_resources.dart';
 import 'package:mynewapp/favourite/favourite_controller.dart';
@@ -22,22 +23,25 @@ class _FavouriteState extends State<Favourite>
 
   @override
   void initState() {
-    _controller = FavouriteController();
+    _controller = Get.put(FavouriteController(), permanent: true);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      label: 'Theo dõi',
+      label: 'Following'.tr,
       appBar: AppBar(
-        title: safeText(text: 'Theo dõi', color: Colors.white),
+        title: safeText(text: 'Following'.tr, color: Colors.white),
         backgroundColor: commonColor(),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
       ),
       body: TabBase(
         tabTextSize: 15.sp,
         tabBarColor: commonColor(),
-        tabTitleList: const ['Đội bóng', 'Cầu thủ'],
+        tabTitleList: ['Teams'.tr, 'Players'.tr],
         tabs: [
           favTeamTab(),
           favPlayersTab(),
@@ -52,116 +56,135 @@ class _FavouriteState extends State<Favourite>
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Obx(
-              () => GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _controller.favTeams.toList().length + 1,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 10.h,
-                  crossAxisSpacing: 10.w,
-                  childAspectRatio: 1,
-                ),
-                itemBuilder: (context, index) {
-                  return (index == _controller.favTeams.length)
-                      ? InkWell(
-                          onTap: () async {
-                            final teamsList = _controller
-                                    .commonRapidPLTeams.plTeams
-                                    ?.map((team) => team.team?.name ?? '')
-                                    .toList() ??
-                                [];
-                            final teamsId = _controller
-                                    .commonRapidPLTeams.plTeams
-                                    ?.map((team) => team.team?.id ?? 0)
-                                    .toList() ??
-                                [];
-                            final teamProfile =
-                                _controller.commonRapidPLTeams.plTeams ?? [];
-                            final result = await showSearch(
-                              context: context,
-                              delegate: CustomSearchDelegate(
-                                groups: ['Premier League'],
-                                details: [teamsList],
-                                detailsId: [teamsId],
-                                groupsProfiles: [39],
-                                detailsProfiles: [teamProfile],
-                              ),
-                            );
+            Obx(() {
+              (_controller.isLoading.value)
+                  ? context.loaderOverlay.show()
+                  : context.loaderOverlay.hide();
 
-                            if (result != null) {
-                              if (result['detailID'] is int) {
-                                final color = _controller.getColorPLDataById(
-                                    teamRapidId: result['detailID']);
-                                _controller.colorByTeams.add(color);
-                                _controller.orgIds.add(
-                                    _controller.getOrgIdByRapidId(
-                                        teamRapidId: result['detailID']));
-                                final beforeLength =
-                                    _controller.favTeams.length;
-                                _controller.favTeams
-                                    .add(result['detailProfile']);
-                                final afterLength = _controller.favTeams.length;
-                                if (afterLength == beforeLength) {
-                                  _controller.colorByTeams.removeLast();
-                                }
-                              }
-                            }
-                          },
-                          child: addNewMark('Lưu đội bóng mới'),
-                        )
-                      : (_controller.favTeams.isEmpty)
-                          ? null
-                          : InkWell(
-                              onTap: () {
-                                final basePath =
-                                    _controller.favTeams.toList()[index].team;
-                                final color = _controller.colorByTeams[index];
-                                final clubName = basePath?.name ?? '';
-                                final crest = basePath?.logo ?? '';
-                                //Đang test
-                                (basePath?.id != null)
-                                    ? Get.to(
-                                        TeamsDetail(
-                                          clubColor: color,
-                                          clubName: clubName,
-                                          clubCrest: crest,
-                                        ),
-                                        arguments: {
-                                            'orgTeamId': _controller.orgIds
-                                                .toList()[index],
-                                            'rapidTeamId': basePath?.id,
-                                          })
-                                    : null;
-                              },
-                              child: favouriteWidget(
-                                name: _controller.favTeams
-                                        .toList()[index]
-                                        .team
-                                        ?.name ??
-                                    '',
-                                image: _controller.favTeams
-                                        .toList()[index]
-                                        .team
-                                        ?.logo ??
-                                    '',
-                                stadium: _controller.favTeams
-                                        .toList()[index]
-                                        .venue
-                                        ?.name ??
-                                    '',
-                                teamColor: _controller.colorByTeams[index],
-                                onClose: () {
-                                  _controller.colorByTeams.removeAt(index);
-                                  _controller.favTeams.remove(
-                                      _controller.favTeams.toList()[index]);
+              return (_controller.isLoading.value)
+                  ? Container()
+                  : GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _controller.favTeams.toList().length + 1,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 10.h,
+                        crossAxisSpacing: 10.w,
+                        childAspectRatio: 1,
+                      ),
+                      itemBuilder: (context, index) {
+                        return (index == _controller.favTeams.length)
+                            ? InkWell(
+                                onTap: () async {
+                                  final teamsList = _controller
+                                          .commonRapidPLTeams.plTeams
+                                          ?.map((team) => team.team?.name ?? '')
+                                          .toList() ??
+                                      [];
+                                  final teamsId = _controller
+                                          .commonRapidPLTeams.plTeams
+                                          ?.map((team) => team.team?.id ?? 0)
+                                          .toList() ??
+                                      [];
+                                  final teamProfile =
+                                      _controller.commonRapidPLTeams.plTeams ??
+                                          [];
+                                  final result = await showSearch(
+                                    context: context,
+                                    delegate: CustomSearchDelegate(
+                                      groups: ['Premier League'],
+                                      details: [teamsList],
+                                      detailsId: [teamsId],
+                                      groupsProfiles: [39],
+                                      detailsProfiles: [teamProfile],
+                                    ),
+                                  );
+
+                                  if (result != null) {
+                                    final color =
+                                        _controller.getColorPLDataById(
+                                            teamRapidId: result['detailID']);
+                                    _controller.colorByTeams.add(color);
+                                    _controller.orgIds.add(
+                                        _controller.getOrgIdByRapidId(
+                                            teamRapidId: result['detailID']));
+                                    final beforeLength =
+                                        _controller.favTeams.length;
+                                    _controller.favTeams
+                                        .add(result['detailProfile']);
+                                    final afterLength =
+                                        _controller.favTeams.length;
+                                    if (afterLength == beforeLength) {
+                                      _controller.colorByTeams.removeLast();
+                                    }
+                                    _controller.isLoading.value = true;
+                                    await _controller.saveFavTeamsData();
+                                    _controller.isLoading.value = false;
+                                  }
                                 },
-                              ),
-                            );
-                },
-              ),
-            ),
+                                child: addNewMark('Mark a new club'.tr),
+                              )
+                            : (_controller.favTeams.isEmpty)
+                                ? null
+                                : InkWell(
+                                    onTap: () {
+                                      final basePath = _controller.favTeams
+                                          .toList()[index]
+                                          .team;
+                                      final color =
+                                          _controller.colorByTeams[index];
+                                      final clubName = basePath?.name ?? '';
+                                      final crest = basePath?.logo ?? '';
+                                      //Đang test
+                                      (basePath?.id != null)
+                                          ? Get.to(
+                                              TeamsDetail(
+                                                clubColor: color,
+                                                clubName: clubName,
+                                                clubCrest: crest,
+                                              ),
+                                              arguments: {
+                                                  'orgTeamId': _controller
+                                                      .orgIds
+                                                      .toList()[index],
+                                                  'rapidTeamId': basePath?.id,
+                                                })
+                                          : null;
+                                    },
+                                    child: favouriteWidget(
+                                      name: _controller.favTeams
+                                              .toList()[index]
+                                              .team
+                                              ?.name ??
+                                          '',
+                                      image: _controller.favTeams
+                                              .toList()[index]
+                                              .team
+                                              ?.logo ??
+                                          '',
+                                      stadium: _controller.favTeams
+                                              .toList()[index]
+                                              .venue
+                                              ?.name ??
+                                          '',
+                                      teamColor:
+                                          _controller.colorByTeams[index],
+                                      onClose: () async {
+                                        _controller.colorByTeams
+                                            .removeAt(index);
+                                        _controller.favTeams.remove(_controller
+                                            .favTeams
+                                            .toList()[index]);
+                                        _controller.isLoading.value = true;
+                                        await _controller.saveFavTeamsData();
+                                        _controller.isLoading.value = false;
+                                      },
+                                    ),
+                                  );
+                      },
+                    );
+            }),
             SizedBox(
               height: 100.h,
             ),
@@ -259,9 +282,12 @@ class _FavouriteState extends State<Favourite>
                                 _controller.teamsOfFavPlayers.removeLast();
                                 _controller.colorByPlayers.removeLast();
                               }
+                              _controller.isLoading.value = true;
+                              await _controller.saveFavPlayersData();
+                              _controller.isLoading.value = false;
                             }
                           },
-                          child: addNewMark('Lưu cầu thủ mới'),
+                          child: addNewMark('Mark a new player'.tr),
                         )
                       : (_controller.favPlayers.isNotEmpty &&
                               _controller.teamsOfFavPlayers.isNotEmpty)
@@ -307,11 +333,14 @@ class _FavouriteState extends State<Favourite>
                                 playerClubImage: _controller.teamsOfFavPlayers
                                     .toList()[index]
                                     .logo,
-                                onClose: () {
+                                onClose: () async {
                                   _controller.teamsOfFavPlayers.removeAt(index);
                                   _controller.colorByPlayers.removeAt(index);
                                   _controller.favPlayers.remove(
                                       _controller.favPlayers.toList()[index]);
+                                  _controller.isLoading.value = true;
+                                  await _controller.saveFavPlayersData();
+                                  _controller.isLoading.value = false;
                                 },
                                 playerClubName:
                                     _controller.teamsOfFavPlayers[index].name,
@@ -351,6 +380,7 @@ class _FavouriteState extends State<Favourite>
         const Icon(
           Icons.add_circle_outline,
           size: 22,
+          color: Colors.black,
         ),
         const SizedBox(
           height: 10,
@@ -358,6 +388,8 @@ class _FavouriteState extends State<Favourite>
         safeText(
           text: description,
           fontSize: 17.sp,
+          maxLines: 2,
+          color: Colors.black,
         )
       ],
     ));
@@ -418,7 +450,7 @@ class _FavouriteState extends State<Favourite>
                       width: 5.0,
                     ),
                     safeText(
-                      text: 'Stadium',
+                      text: 'Stadium'.tr,
                       color: (teamColor != Colors.white) ? Colors.white : null,
                       fontSize: 12.sp,
                     ),

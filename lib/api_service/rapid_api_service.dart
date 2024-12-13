@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:mynewapp/home/currentRounds_model.dart';
 import 'package:mynewapp/home/matches_model.dart';
+import 'package:mynewapp/matches_detail/head_to_head_model.dart';
+import 'package:mynewapp/matches_detail/match_statistics_model.dart';
 import 'package:mynewapp/players_detail/players_details_model.dart';
 import 'package:mynewapp/teams_detail/fotorg_teams_detail_model.dart';
 import 'package:mynewapp/teams_detail/rapid_teamSquad_model.dart';
@@ -97,6 +99,44 @@ class RapidFootballService {
 
     } catch (e) {
       Get.snackbar('Error', 'Error occur');
+    }
+    return null;
+  }
+
+  Future<MatchStatistics?> fetchMatchesDetail({required int id}) async {
+    try {
+      final response = await _dio.get(
+        '/v3/fixtures/statistics',
+        queryParameters: {
+          'fixture': id,
+        },
+      );
+      if(response.statusCode == 200){
+        return MatchStatistics.fromJson(response.data as Map<String, dynamic>);
+      }
+
+    } catch (e) {
+      Get.snackbar('Error', 'Error occur fetchMatchesDetail');
+      print('KET QUA LA $e');
+    }
+    return null;
+  }
+
+  Future<HeadToHead?> fetchHeadToHead({required int homeTeamId, required awayTeamId}) async {
+    try {
+      final response = await _dio.get(
+        '/v3/fixtures/headtohead',
+        queryParameters: {
+          'h2h': '$homeTeamId-$awayTeamId',
+        },
+      );
+      if(response.statusCode == 200){
+        return HeadToHead.fromJson(response.data as Map<String, dynamic>);
+      }
+
+    } catch (e) {
+      Get.snackbar('Error', 'Error occur fetchHeadToHead');
+      print('KET QUA LA $e');
     }
     return null;
   }

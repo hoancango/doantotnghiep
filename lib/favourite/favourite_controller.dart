@@ -26,19 +26,22 @@ class FavouriteController extends GetxController {
 
   RxSet<rapid_teams.PlTeams> favTeams = <rapid_teams.PlTeams>{}.obs;
   List<Color> colorByTeams = <Color>[];
+  Set<int> orgIds = {};
   List<rapid_players.Team> teamsOfFavPlayers = <rapid_players.Team>[];
   RxSet<rapid_players.Players> favPlayers = <rapid_players.Players>{}.obs;
   List<Color> colorByPlayers = <Color>[];
-  Set<int> orgIds= {};
+  RxBool isLoading = false.obs;
 
-  // @override
-  // Future<void> onInit() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   loadFavTeamsData();
-  //   loadFavPlayersData();
-  //
-  //   super.onInit();
-  // }
+  @override
+  Future<void> onInit() async {
+    isLoading.value = true;
+    prefs = await SharedPreferences.getInstance();
+    loadFavTeamsData();
+    loadFavPlayersData();
+    isLoading.value = false;
+    super.onInit();
+  }
+
   Color getColorPLDataById({
     int? teamRapidId,
   }) {
@@ -123,11 +126,13 @@ class FavouriteController extends GetxController {
     } catch (e) {
       orgId = null;
     }
+
     (orgId == null)
         ? orgId = commonOrgPLTeams.teams
-            ?.firstWhere((team) => team.name?.contains(teamName) ?? false)
+            ?.firstWhere((team) => team.name?.contains(teamName) ?? false,)
             .id
         : null;
+
 
     (orgId != null) ? result = orgId : null;
 
@@ -135,28 +140,72 @@ class FavouriteController extends GetxController {
   }
 
   Future<void> saveFavTeamsData() async {
-    List<String> jsonList = favTeams.map((team) => jsonEncode(team.toJson())).toList();
-    await prefs.setStringList('favTeams', jsonList);
+    try {
+      List<String> jsonList =
+          favTeams.map((team) => jsonEncode(team.toJson())).toList();
+      List<String> jsonColorList =
+          colorByTeams.map((color) => color.value.toRadixString(16)).toList();
+      List<String> jsonOrgIds = orgIds.map((id) => id.toString()).toList();
+
+      await prefs.setStringList('favTeams', jsonList);
+      await prefs.setStringList('favTeamsColors', jsonColorList);
+      await prefs.setStringList('favTeamsOrgIds', jsonOrgIds);
+    } catch (e) {
+      Get.snackbar('Error', 'Error occur');
+      print('NOI DUNG LOI $e');
+    }
   }
 
   Future<void> saveFavPlayersData() async {
-    List<String> jsonList = favPlayers.map((player) => jsonEncode(player.toJson())).toList();
-    await prefs.setStringList('favPlayers', jsonList);
+    try {
+      List<String> jsonList =
+          favPlayers.map((player) => jsonEncode(player.toJson())).toList();
+      List<String> jsonColorList =
+          colorByPlayers.map((color) => color.value.toRadixString(16)).toList();
+      List<String> jsonTeamsList =
+          teamsOfFavPlayers.map((team) => jsonEncode(team.toJson())).toList();
+      await prefs.setStringList('favPlayers', jsonList);
+      await prefs.setStringList('teamsOfFavPlayers', jsonTeamsList);
+      await prefs.setStringList('favPlayersColors', jsonColorList);
+    } catch (e) {
+      Get.snackbar('Error', 'Error occur');
+      print('NOI DUNG LOI $e');
+    }
   }
 
   void loadFavTeamsData() {
     List<String>? jsonList = prefs.getStringList('favTeams');
-    if(jsonList != null){
-    favTeams.addAll(jsonList.map((json) => rapid_teams.PlTeams.fromJson(jsonDecode(json))));
+    List<String>? jsonColorList = prefs.getStringList('favTeamsColors');
+    List<String>? jsonOrgIds = prefs.getStringList('favTeamsOrgIds');
+    if (jsonList != null && jsonColorList != null && jsonOrgIds != null) {
+      if (jsonList.length == jsonColorList.length &&
+          jsonList.length == jsonOrgIds.length) {
+        favTeams.addAll(jsonList
+            .map((json) => rapid_teams.PlTeams.fromJson(jsonDecode(json))));
+        colorByTeams.addAll(
+            jsonColorList.map((string) => Color(int.parse(string, radix: 16))));
+        orgIds.addAll(jsonOrgIds.map((string) => int.parse(string)));
+      }
     }
   }
 
   void loadFavPlayersData() {
-    List<String>? jsonList = prefs.getStringList('favPlayers');
-    if(jsonList != null){
-      favPlayers.addAll(jsonList.map((json) => rapid_players.Players.fromJson(jsonDecode(json))));
+    List<String>? jsonPlayersList = prefs.getStringList('favPlayers');
+    List<String>? jsonTeamsList = prefs.getStringList('favTeamsColors');
+    List<String>? jsonColorList = prefs.getStringList('favPlayersColors');
+
+    if (jsonPlayersList != null &&
+        jsonTeamsList != null &&
+        jsonColorList != null) {
+      if (jsonPlayersList.length == jsonTeamsList.length &&
+          jsonTeamsList.length == jsonColorList.length) {
+        favPlayers.addAll(jsonPlayersList
+            .map((json) => rapid_players.Players.fromJson(jsonDecode(json))));
+        teamsOfFavPlayers.addAll(jsonPlayersList
+            .map((json) => rapid_players.Team.fromJson(jsonDecode(json))));
+        colorByPlayers.addAll(
+            jsonColorList.map((string) => Color(int.parse(string, radix: 16))));
+      }
     }
   }
-
-
 }

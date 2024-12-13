@@ -29,37 +29,46 @@ class _PlayersDetailState extends State<PlayersDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-        title: safeText(text: widget.playerName, color: Colors.white),
-        backgroundColor:
-            Color.alphaBlend(Colors.black.withOpacity(0.5), widget.color),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(90.h),
-          child: playersHeader(
-            widget.playerImage,
-            widget.clubCrest,
-            widget.playerName,
-            widget.clubName,
-            Color.alphaBlend(Colors.black.withOpacity(0.5), widget.color),
-          ),
+    return Theme(
+      data: Theme.of(context).copyWith(
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black),
+          bodyMedium: TextStyle(color: Colors.black),
+          bodySmall: TextStyle(color: Colors.black),
         ),
       ),
-      body: TabBase(
-        tabTitleList: ['Hồ sơ', 'Thông số'],
-        tabs: [
-          Obx(() => (_controller.isLoading.value == true)
-              ? const Center(child: CircularProgressIndicator())
-              : generalInfo()),
-          Obx(() => (_controller.isLoading.value == true)
-              ? const Center(child: CircularProgressIndicator())
-              : statsInfo()),
-        ],
-        tabBarColor:
-            Color.alphaBlend(Colors.black.withOpacity(0.5), widget.color),
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
+          title: safeText(text: widget.playerName, color: Colors.white),
+          backgroundColor:
+              Color.alphaBlend(Colors.black.withOpacity(0.5), widget.color),
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(90.h),
+            child: playersHeader(
+              widget.playerImage,
+              widget.clubCrest,
+              widget.playerName,
+              widget.clubName,
+              Color.alphaBlend(Colors.black.withOpacity(0.5), widget.color),
+            ),
+          ),
+        ),
+        body: TabBase(
+          tabTitleList: ['Profile'.tr, 'Stats'.tr],
+          tabs: [
+            Obx(() => (_controller.isLoading.value == true)
+                ? const Center(child: CircularProgressIndicator())
+                : generalInfo()),
+            Obx(() => (_controller.isLoading.value == true)
+                ? const Center(child: CircularProgressIndicator())
+                : statsInfo()),
+          ],
+          tabBarColor:
+              Color.alphaBlend(Colors.black.withOpacity(0.5), widget.color),
+        ),
       ),
     );
   }
@@ -72,46 +81,46 @@ class _PlayersDetailState extends State<PlayersDetail> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: infoBlock(
-                title: 'Personal Detail',
+                title: 'Personal details'.tr,
                 content: Column(
                   children: [
                     infoRow(
-                      label: 'First Name',
+                      label: 'First name'.tr,
                       text: _controller.playerData.value?.player?.firstname ??
                           'Rodrigo',
                     ),
                     infoRow(
-                      label: 'Last Name',
+                      label: 'Last name'.tr,
                       text: _controller.playerData.value?.player?.lastname ??
                           "Hernández Cascante",
                     ),
                     infoRow(
-                      label: 'Age',
+                      label: 'Age'.tr,
                       text: '${_controller.playerData.value?.player?.age}',
                     ),
                     infoRow(
-                      label: 'Nationality',
+                      label: 'Nationality'.tr,
                       text: _controller.playerData.value?.player?.nationality ??
                           'Spain',
                     ),
                     infoRow(
-                      label: 'Date of birth',
+                      label: 'Date of birth'.tr,
                       text: _controller.playerData.value?.player?.birth?.date ??
                           "1996-06-22",
                     ),
                     infoRow(
-                      label: "Place",
+                      label: "Place".tr,
                       text:
                           _controller.playerData.value?.player?.birth?.place ??
                               'Madrid',
                     ),
                     infoRow(
-                      label: "Height",
+                      label: "Height".tr,
                       text: _controller.playerData.value?.player?.height ??
                           "190 cm",
                     ),
                     infoRow(
-                      label: "Weight",
+                      label: "Weight".tr,
                       text: _controller.playerData.value?.player?.height ??
                           "82 kg",
                     ),
@@ -122,7 +131,7 @@ class _PlayersDetailState extends State<PlayersDetail> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: infoBlock(
-                title: 'Running Competitions',
+                title: 'Running competitions'.tr,
                 content: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -188,24 +197,24 @@ class _PlayersDetailState extends State<PlayersDetail> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
-                  title: 'Overview',
+                  title: 'Overview'.tr,
                   border: commonBorder(),
                   content: Column(
                     children: [
                       infoRow(
-                          label: 'Appearances',
+                          label: 'Appearances'.tr,
                           text: '${basePath?.games?.appearences ?? '_'}'),
                       infoRow(
-                          label: 'Lineup',
+                          label: 'Lineup'.tr,
                           text: '${basePath?.games?.lineups ?? '_'}'),
                       infoRow(
-                          label: 'Minutes',
+                          label: 'Minutes'.tr,
                           text: '${basePath?.games?.minutes ?? '_'}'),
                       infoRow(
-                          label: 'Position',
+                          label: 'Position'.tr,
                           text: basePath?.games?.position ?? "_"),
                       infoRow(
-                          label: 'Rating',
+                          label: 'Rating'.tr,
                           text: basePath?.games?.rating ?? '_'),
                     ],
                   ),
@@ -219,14 +228,14 @@ class _PlayersDetailState extends State<PlayersDetail> {
                   content: Column(
                     children: [
                       infoRow(
-                          label: 'Goals',
+                          label: 'Goals'.tr,
                           text: '${basePath?.goals?.total ?? '_'}'),
                       infoRow(
-                        label: 'Shots',
+                        label: 'Shots'.tr,
                         text: '${basePath?.shots?.total ?? '_'}',
                       ),
                       infoRow(
-                          label: 'Shots on target',
+                          label: 'Shots on target'.tr,
                           text: '${basePath?.shots?.on ?? '_'}'),
                     ],
                   ),
@@ -236,17 +245,17 @@ class _PlayersDetailState extends State<PlayersDetail> {
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
                   border: commonBorder(),
-                  title: 'Team Play',
+                  title: 'Team play'.tr,
                   content: Column(
                     children: [
                       infoRow(
-                          label: 'Assists',
+                          label: 'Assists'.tr,
                           text: '${basePath?.goals?.assists ?? '_'}'),
                       infoRow(
-                          label: 'Passes',
+                          label: 'Passes'.tr,
                           text: '${basePath?.passes?.total ?? '_'}'),
                       infoRow(
-                        label: 'Key pass',
+                        label: 'Key pass'.tr,
                         text: '${basePath?.passes?.key ?? '_'}',
                       ),
                     ],
@@ -257,20 +266,20 @@ class _PlayersDetailState extends State<PlayersDetail> {
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
                   border: commonBorder(),
-                  title: 'Discipline',
+                  title: 'Discipline'.tr,
                   content: Column(
                     children: [
                       infoRow(
-                          label: 'Yellow Cards',
+                          label: 'Yellow cards'.tr,
                           text: '${basePath?.cards?.yellow ?? '_'}'),
                       infoRow(
-                          label: 'Red Cards(2nd Yellow)',
+                          label: 'Red cards(2nd yellow)'.tr,
                           text: '${basePath?.cards?.yellowred ?? '_'}'),
                       infoRow(
-                          label: 'Red Cards',
+                          label: 'Red cards'.tr,
                           text: '${basePath?.cards?.red ?? '_'}'),
                       infoRow(
-                          label: 'Committed',
+                          label: 'Committed'.tr,
                           text: '${basePath?.fouls?.committed ?? '_'}'),
                     ],
                   ),
@@ -280,17 +289,17 @@ class _PlayersDetailState extends State<PlayersDetail> {
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
                   border: commonBorder(),
-                  title: 'Substitutes',
+                  title: 'Substitutes'.tr,
                   content: Column(
                     children: [
                       infoRow(
-                          label: 'In',
+                          label: 'In'.tr,
                           text: '${basePath?.substitutes?.subIn ?? '_'}'),
                       infoRow(
-                          label: 'Out',
+                          label: 'Out'.tr,
                           text: '${basePath?.substitutes?.subOut ?? '_'}'),
                       infoRow(
-                          label: 'Bench',
+                          label: 'Bench'.tr,
                           text: '${basePath?.substitutes?.bench ?? '_'}'),
                     ],
                   ),

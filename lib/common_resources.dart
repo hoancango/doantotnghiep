@@ -228,6 +228,8 @@ Widget globalDropDownBox({
               underline: const SizedBox.shrink(),
               isExpanded: true,
               value: selectedIndex.value,
+              dropdownColor: Colors.white,
+              iconEnabledColor: Colors.black,
               items: List.generate(dropDownData.length, (index) {
                 return DropdownMenuItem<int>(
                   value: index,
@@ -242,13 +244,16 @@ Widget globalDropDownBox({
                       SizedBox(
                         width: 5.0.w,
                       ),
-                      safeText(text: dropDownData[index], fontSize: 14.sp),
+                      safeText(
+                          text: dropDownData[index],
+                          fontSize: 14.sp,
+                          color: Colors.black),
                     ],
                   ),
                 );
               }).toList(),
               onChanged: (int? newIndex) {
-                if(newIndex != null){
+                if (newIndex != null) {
                   selectedIndex.value = newIndex;
                   onValueChanged(newIndex);
                 }
@@ -402,7 +407,7 @@ Widget shadowContainer({
 
 BoxShadow commonShadow() {
   return BoxShadow(
-    color: Colors.black.withOpacity(0.2),
+    color: Colors.grey.withOpacity(0.2),
     blurRadius: 3,
     offset: const Offset(0, 1),
   );
@@ -421,10 +426,7 @@ Widget loadImages({
   double? brighterWithOpacity,
   Color? backgroundColor,
   BoxShape shape = BoxShape.rectangle,
-  Widget errorWidget = const Icon(
-    Icons.error,
-    color: Colors.grey,
-  ),
+  Widget errorWidget = const SizedBox(),
 }) {
   return Container(
     height: height,
@@ -468,12 +470,14 @@ Widget safeText({
   required String text,
   Color? color,
   bool? isBold,
+  TextAlign? textAlign,
   double? fontSize,
   bool safeEnable = true,
   int maxLines = 1,
 }) {
   return Text(
     text,
+    textAlign: textAlign,
     style: TextStyle(
       overflow: (safeEnable == true) ? TextOverflow.ellipsis : null,
       color: (color != null) ? color : null,
@@ -484,28 +488,34 @@ Widget safeText({
   );
 }
 
-String toLocalTime({required String utcString, bool byWeekday = false}) {
-  DateTime utcTime = DateTime.parse(utcString);
-  DateTime localTime = utcTime.toLocal();
-  String weekDay = weekDayFormatter(localTime.weekday);
-  String day = localTime.day.toString().padLeft(2, '0');
-  String month = localTime.month.toString().padLeft(2, '0');
-  String hours = localTime.hour.toString().padLeft(2, '0');
-  String minutes = localTime.minute.toString().padLeft(2, '0');
+String toLocalTime({required String utcString, bool byWeekday = false, bool byDay = false,}) {
   String localTimeString = '';
-  if (byWeekday == false) {
-    localTimeString = '$hours:$minutes';
-  } else{
-    localTimeString = '$weekDay ngày $day tháng $month';
+  try {
+    DateTime utcTime = DateTime.parse(utcString);
+    DateTime localTime = utcTime.toLocal();
+    String weekDay = weekDayFormatter(localTime.weekday);
+    String day = localTime.day.toString().padLeft(2, '0');
+    String month = localTime.month.toString().padLeft(2, '0');
+    String hours = localTime.hour.toString().padLeft(2, '0');
+    String minutes = localTime.minute.toString().padLeft(2, '0');
+
+    if (byWeekday == false && byDay == false) {
+      localTimeString = '$hours:$minutes';
+    } else if(byDay == true){
+      localTimeString = '$day-$month \n $hours:$minutes';
+    }else {
+      localTimeString = '$weekDay ngày $day tháng $month';
+    }
+  } catch (e) {
+    Get.snackbar('Error', 'Error occur toLocalTime');
   }
 
   return localTimeString;
 }
 
-
 String weekDayFormatter(int weekDayInt) {
   String result = '';
-  (weekDayInt == 1) ? result = 'CN' : result = 'T$weekDayInt';
+  (weekDayInt == 7) ? result = 'Chủ nhật' : result = 'Thứ ${weekDayInt + 1}';
   return result;
 }
 
@@ -564,7 +574,7 @@ Widget getMatches(
                               homeGoals != null &&
                               awayGoals != null)
                           ? safeText(text: '$homeGoals - $awayGoals')
-                          : safeText(text: '!Lỗi'),
+                          : safeText(text: ''),
                 ),
               ),
             ),
@@ -827,10 +837,9 @@ Color convertColor(String input) {
     'indigo': Colors.indigo,
     'amber': Colors.amber,
   };
-  filteredInput = modifiedInput
-      .firstWhere((modInput) => colorMap.containsKey(modInput.toLowerCase()));
+  filteredInput = modifiedInput.firstWhere(
+      (modInput) => colorMap.containsKey(modInput.toLowerCase()),
+      orElse: () => '');
 
   return colorMap[filteredInput.toLowerCase()] ?? Colors.grey;
 }
-
-

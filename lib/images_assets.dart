@@ -8,4 +8,7 @@ class ImagesAssets{
   static String menu = '${basePath}menu.png';
   static String plCup = '${basePath}plTrophy.png';
   static String crest = '${basePath}crest.png';
+  static String pl = '${basePath}pl.png';
+  static String green = '${basePath}green2.jpg';
+  static String grey = '${basePath}grey.jpg';
 }

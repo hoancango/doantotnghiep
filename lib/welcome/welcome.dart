@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:mynewapp/base_screen.dart';
 import 'package:mynewapp/common_data/common_data_org_teams.dart';
 import 'package:mynewapp/common_resources.dart';
+import 'package:mynewapp/images_assets.dart';
+import 'package:mynewapp/welcome/favTeamQuest.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -15,15 +18,17 @@ class _WelcomeState extends State<Welcome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[400],
+      backgroundColor: commonColor(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset(ImagesAssets.pl, color: Colors.white,),
+              const SizedBox(height: 10,),
               safeText(
-                text: 'Welcome!',
+                text: "${'Welcome'.tr}!",
                 fontSize: 30.sp,
                 isBold: true,
                 color: Colors.white,
@@ -34,37 +39,41 @@ class _WelcomeState extends State<Welcome> {
               safeText(
                 safeEnable: false,
                 text:
-                    'Help us tailor your experience by answering a few quick and easy questions',
+                    'Help me tailor your experience by answering a few quick and easy questions'.tr,
                 color: Colors.white,
                 isBold: true,
               ),
               SizedBox(
-                height: 10.h,
+                height: 60.h,
               ),
               button(
-                text: 'Get started',
+                onTab: (){
+                  Get.to(const FavTeamQues());
+                },
+                text: 'Get started'.tr,
                 color: Colors.white,
+                textColor: Colors.black,
                 height: 50.h,
                 width: ScreenUtil().screenWidth,
               ),
-              SizedBox(
-                height: 10.h,
-              ),
-              safeText(
-                text: 'If you already have an account',
-                color: Colors.white,
-                isBold: true,
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              button(
-                text: 'Log in',
-                color: commonColor(),
-                textColor: Colors.white,
-                height: 50.h,
-                width: ScreenUtil().screenWidth,
-              ),
+              // SizedBox(
+              //   height: 10.h,
+              // ),
+              // safeText(
+              //   text: 'If you already have an account',
+              //   color: Colors.white,
+              //   isBold: true,
+              // ),
+              // SizedBox(
+              //   height: 10.h,
+              // ),
+              // button(
+              //   text: 'Log in',
+              //   color: Colors.lightBlue,
+              //   textColor: Colors.white,
+              //   height: 50.h,
+              //   width: ScreenUtil().screenWidth,
+              // ),
             ],
           ),
         ),

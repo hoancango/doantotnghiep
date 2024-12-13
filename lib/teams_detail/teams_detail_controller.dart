@@ -15,6 +15,7 @@ class TeamsInfoController extends GetxController{
   RxList<Players> defenders = <Players>[].obs;
   RxList<Players> midfielder = <Players>[].obs;
   RxList<Players> attackers = <Players>[].obs;
+  // RxBool isLoading = false.obs;
   late int orgTeamId;
   late int rapidTeamId;
 
@@ -22,11 +23,13 @@ class TeamsInfoController extends GetxController{
 
   @override
   Future<void> onInit() async {
+    // isLoading.value = true;
     orgTeamId = Get.arguments['orgTeamId'];
     rapidTeamId = Get.arguments['rapidTeamId'];
     await fetchTeamInfo(id: orgTeamId);
     await fetchTeamSquads(id: rapidTeamId);
     positionFilter();
+    // isLoading.value = false;
     super.onInit();
   }
 

@@ -4,11 +4,15 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:mynewapp/players_detail/players_detail.dart';
+import 'package:mynewapp/setting/setting.dart';
+import 'package:mynewapp/setting/translation.dart';
 import 'package:mynewapp/standings/standings.dart';
 import 'package:mynewapp/teams_detail/teams_detail.dart';
 import 'package:mynewapp/welcome/favTeamQuest.dart';
+import 'package:mynewapp/welcome/loading_screen.dart';
 import 'package:mynewapp/welcome/successLogin.dart';
 import 'package:mynewapp/welcome/welcome.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'base_screen.dart';
 import 'favourite/favourite_screen.dart';
@@ -17,11 +21,26 @@ import 'home/home_screen.dart';
 import 'matches_detail/matches_detail.dart';
 import 'news/news_screen.dart';
 
-void main() {
-  // WidgetsFlutterBinding.ensureInitialized();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp();
+  await loadUserChoices();
   runApp(const MyGetApp());
 }
+
+Future<void> loadUserChoices() async {
+  final prefs = await SharedPreferences.getInstance();
+  String? selectedLanguage = prefs.getString('selectedLanguage');
+  (selectedLanguage == 'English')
+      ? Get.locale = const Locale('en', 'GB')
+      : Get.locale = const Locale('vi', 'VN');
+  bool? isDarkMode = prefs.getBool('isDarkMode');
+  if (isDarkMode != null){
+    Get.changeTheme((isDarkMode)?ThemeData.dark():ThemeData.light());
+    Get.changeThemeMode((isDarkMode)?ThemeMode.dark:ThemeMode.light);
+  }
+}
+
 
 class MyGetApp extends StatelessWidget {
   const MyGetApp({super.key});
@@ -32,42 +51,28 @@ class MyGetApp extends StatelessWidget {
       designSize: const Size(411, 843),
       minTextAdapt: true,
       ensureScreenSize: true,
-      builder: (_,__){
-        return GetMaterialApp(
-          // translations: LocalString(),
-          // darkTheme: ThemesApp.dark,
-          // themeMode: ThemeMode.light,
-          locale: Get.locale,
-          fallbackLocale: const Locale('en','GB'),
-          // initialBinding: MyBinding(),
-          // getPages: [
-          //   GetPage(
-          //     name: '/page2',
-          //     page: () => Screen2(),
-          //     binding: MyBinding(),
-          //   ),
-          //   GetPage(
-          //     name: '/signUp',
-          //     page: () => const SignUpScreen(),
-          //     binding: MyBinding(),
-          //   ),
-          // ],
+      builder: (_, __) {
+        return GlobalLoaderOverlay(
+          overlayWidgetBuilder: (_) {
+            return const Center(
+                child: SpinKitFadingCircle(
+              color: Colors.white,
+              size: 50,
+            ));
+          },
+          child: GetMaterialApp(
+            translations: AppTranslation(),
+            theme: ThemeData.light(),
+            darkTheme: ThemeData.dark(),
+            themeMode: ThemeMode.system,
+            locale: Get.locale ?? Get.deviceLocale ?? const Locale('vi', 'VN'),
+            fallbackLocale: const Locale('vi', 'VN'),
 
-          home: LoaderOverlay(
-            overlayWidgetBuilder: (_){
-              return  const Center(child: SpinKitFadingCircle(
-                color: Colors.white,
-                size: 50,
-              ));
-            },
-
-              child: const Home()
+            home: const Fixtures(),
           ),
-
         );
       },
     );
-
   }
 }
 

@@ -35,33 +35,42 @@ class _TeamsDetailState extends State<TeamsDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(
-            color: (widget.clubColor != Colors.white) ? Colors.white : null),
-        title: safeText(
-          text: widget.clubName,
-          color: (widget.clubColor != Colors.white) ? Colors.white : null,
-          fontSize: 21.sp,
-        ),
-        backgroundColor: themeColor(),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(90.h),
-          child: teamsHeader(
-            widget.clubCrest,
-            "Club",
-            widget.clubName,
-            themeColor(),
-          ),
+    return Theme(
+      data: Theme.of(context).copyWith(
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black),
+          bodyMedium: TextStyle(color: Colors.black),
+          bodySmall: TextStyle(color: Colors.black),
         ),
       ),
-      body: TabBase(
-        tabBarColor: themeColor(),
-        tabTitleList: ['Tổng quan', 'Đội hình'],
-        tabs: [
-          commonInfo(),
-          squadInfo(),
-        ],
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: IconThemeData(
+              color: (widget.clubColor != Colors.white) ? Colors.white : null),
+          title: safeText(
+            text: widget.clubName,
+            color: (widget.clubColor != Colors.white) ? Colors.white : null,
+            fontSize: 21.sp,
+          ),
+          backgroundColor: themeColor(),
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(90.h),
+            child: teamsHeader(
+              widget.clubCrest,
+              "Club".tr,
+              widget.clubName,
+              themeColor(),
+            ),
+          ),
+        ),
+        body: TabBase(
+          tabBarColor: themeColor(),
+          tabTitleList: ['Overview'.tr, 'Squad'.tr],
+          tabs: [
+            commonInfo(),
+            squadInfo(),
+          ],
+        ),
       ),
     );
   }
@@ -70,17 +79,19 @@ class _TeamsDetailState extends State<TeamsDetail> {
     return TabContentBase(
       body: SingleChildScrollView(
         child: Obx(
-          () => Column(
+          (){
+            //isloading and isError
+            return Column(
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
-                  title: 'Club Detail',
+                  title: 'Club Details'.tr,
                   content: Column(
                     children: [
                       infoRow(
                         labelSize: 18.sp,
-                        label: 'Nation',
+                        label: 'Nation'.tr,
                         content: Wrap(
                           children: [
                             loadImages(
@@ -103,12 +114,12 @@ class _TeamsDetailState extends State<TeamsDetail> {
                       ),
                       infoRow(
                         labelSize: 17.sp,
-                        label: 'Founded',
+                        label: 'Founded'.tr,
                         text: '${_controller.teamData.value.founded}',
                       ),
                       infoRow(
                         labelSize: 17.sp,
-                        label: 'Address',
+                        label: 'Address'.tr,
                         content: safeText(
                           maxLines: 2,
                           text: _controller.teamData.value.address ??
@@ -118,12 +129,13 @@ class _TeamsDetailState extends State<TeamsDetail> {
                         ),
                       ),
                       infoRow(
-                        label: 'Venue',
-                        hasImage: false,
+                        label: 'Venue'.tr,
+                        labelSize: 17.sp,
                         text: _controller.teamData.value.venue,
                       ),
                       infoRow(
-                          label: 'Club Color',
+                          label: 'Club color'.tr,
+                          labelSize: 17.sp,
                           text: _controller.teamData.value.clubColors)
                     ],
                   ),
@@ -132,22 +144,22 @@ class _TeamsDetailState extends State<TeamsDetail> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
-                  title: 'Coach',
+                  title: 'Coach'.tr,
                   content: Column(
                     children: [
                       infoRow(
                         labelSize: 17.sp,
-                        label: 'Name',
+                        label: 'Name'.tr,
                         text: _controller.teamData.value.coach?.name,
                       ),
                       infoRow(
                         labelSize: 17.sp,
-                        label: 'Date Of Birth',
+                        label: 'Date of birth'.tr,
                         text: _controller.teamData.value.coach?.dateOfBirth,
                       ),
                       infoRow(
                         labelSize: 17.sp,
-                        label: 'Nationality',
+                        label: 'Nationality'.tr,
                         text: _controller.teamData.value.coach?.nationality,
                       ),
                     ],
@@ -155,11 +167,11 @@ class _TeamsDetailState extends State<TeamsDetail> {
                 ),
               ),
               infoContainer(
-                title: 'Running Competitions',
+                title: 'Running competitions'.tr,
                 data: _controller.teamData.value.runningCompetitions ?? [],
               ),
             ],
-          ),
+          );}
         ),
       ),
     );
@@ -174,7 +186,7 @@ class _TeamsDetailState extends State<TeamsDetail> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
-                  title: 'Goalkeeper',
+                  title: 'Goalkeeper'.tr,
                   content: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -194,7 +206,7 @@ class _TeamsDetailState extends State<TeamsDetail> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
-                  title: "Defender",
+                  title: "Defender".tr,
                   content: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -210,34 +222,12 @@ class _TeamsDetailState extends State<TeamsDetail> {
                     },
                   ),
 
-                  // Column(
-                  //   children: [
-                  //     infoImageRow(
-                  //       imageUrl:
-                  //           "https://media.api-sports.io/football/players/889.png",
-                  //       label: "V. Lindelöf",
-                  //       otherInfo: 'No. 2',
-                  //     ),
-                  //     infoImageRow(
-                  //       imageUrl:
-                  //           "https://media.api-sports.io/football/players/545.png",
-                  //       label: "N. Mazraoui",
-                  //       otherInfo: 'No. 3',
-                  //     ),
-                  //     infoImageRow(
-                  //       imageUrl:
-                  //           "https://media.api-sports.io/football/players/532.png",
-                  //       label: "M. de Ligt",
-                  //       otherInfo: 'No. 4',
-                  //     ),
-                  //   ],
-                  // ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
-                  title: "Midfielder",
+                  title: "Midfielder".tr,
                   content: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -252,34 +242,13 @@ class _TeamsDetailState extends State<TeamsDetail> {
                       );
                     },
                   ),
-                  // Column(
-                  //   children: [
-                  //     infoImageRow(
-                  //       imageUrl:
-                  //           "https://media.api-sports.io/football/players/19220.png",
-                  //       label: "M. Mount",
-                  //       otherInfo: 'No. 7',
-                  //     ),
-                  //     infoImageRow(
-                  //       imageUrl:
-                  //           "https://media.api-sports.io/football/players/1485.png",
-                  //       label: "Bruno Fernandes",
-                  //       otherInfo: 'No. 8',
-                  //     ),
-                  //     infoImageRow(
-                  //       imageUrl:
-                  //           "https://media.api-sports.io/football/players/174.png",
-                  //       label: "C. Eriksen",
-                  //       otherInfo: 'No. 14',
-                  //     ),
-                  //   ],
-                  // ),
+
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: infoBlock(
-                  title: "Attacker",
+                  title: "Attacker".tr,
                   content: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -295,28 +264,6 @@ class _TeamsDetailState extends State<TeamsDetail> {
                     },
                   ),
 
-                  // Column(
-                  //   children: [
-                  //     infoImageRow(
-                  //       imageUrl:
-                  //           "https://media.api-sports.io/football/players/288006.png",
-                  //       label: "R. Højlund",
-                  //       otherInfo: 'No. 9',
-                  //     ),
-                  //     infoImageRow(
-                  //       imageUrl:
-                  //           "https://media.api-sports.io/football/players/909.png",
-                  //       label: "M. Rashford",
-                  //       otherInfo: 'No. 10',
-                  //     ),
-                  //     infoImageRow(
-                  //       imageUrl:
-                  //           "https://media.api-sports.io/football/players/70100.png",
-                  //       label: "J. Zirkzee",
-                  //       otherInfo: 'No. 11',
-                  //     ),
-                  //   ],
-                  // ),
                 ),
               ),
               SizedBox(

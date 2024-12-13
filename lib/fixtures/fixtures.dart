@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:mynewapp/base_screen.dart';
 import 'package:mynewapp/fixtures/matches_controller.dart';
+import 'package:mynewapp/matches_detail/matches_detail.dart';
 
 import '../common_resources.dart';
 
@@ -14,27 +15,44 @@ class Fixtures extends StatefulWidget {
   State<Fixtures> createState() => _FixturesState();
 }
 
-class _FixturesState extends State<Fixtures> {
+class _FixturesState extends State<Fixtures>
+    with AutomaticKeepAliveClientMixin {
   List<String> leagueLabels = ['Premier League', 'UEFA Champion League'];
   RxString selectedLeague = ''.obs;
+  RxString globalSelectedValue = ''.obs;
   late MatchesController _controller;
+  late ScrollController _scrollController;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
-    _controller = Get.put(MatchesController(), permanent: true,);
+    _controller = Get.put(
+      MatchesController(),
+      permanent: true,
+    );
     selectedLeague.value = leagueLabels[0];
+    globalSelectedValue.value = _controller.plTeams.toList()[0];
+    _scrollController = ScrollController();
+    _scrollController.addListener(manageNumbersOfMatches);
     super.initState();
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // print('Chieu rong: ${MediaQuery.sizeOf(context).width}');
-    // print('Chieu cao: ${MediaQuery.sizeOf(context).height}');
+    super.build(context);
     return BaseScreen(
-      label: 'Lịch đấu',
+      label: 'Fixtures'.tr,
       appBar: AppBar(
         title: Text(
-          'Lịch đấu',
+          'Fixtures'.tr,
           style: TextStyle(
             color: Colors.white,
           ),
@@ -48,7 +66,7 @@ class _FixturesState extends State<Fixtures> {
               child: Row(
                 children: [
                   leagueDropDownBox(
-                    'Giải đấu',
+                    'Leagues'.tr,
                     leagueLabels[0],
                     leagueLabels,
                   ),
@@ -58,10 +76,7 @@ class _FixturesState extends State<Fixtures> {
                     height: 50.h,
                   ),
                   clubDropDownBox(
-                    'CLB',
-                    (_controller.plTeams.isNotEmpty)
-                        ? _controller.plTeams.toList()[0]
-                        : '',
+                    title: 'Clubs'.tr,
                   ),
                 ],
               ),
@@ -78,11 +93,13 @@ class _FixturesState extends State<Fixtures> {
         return (_controller.isLoading.value)
             ? Container()
             : SingleChildScrollView(
+                controller: _scrollController,
                 child: Column(
                   children: [
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
+                      cacheExtent: 1000,
                       itemCount: _controller.fixtures.toList().length,
                       itemBuilder: (BuildContext context, int index) {
                         final basePath = _controller.fixtures;
@@ -101,6 +118,13 @@ class _FixturesState extends State<Fixtures> {
                           }
                         }
 
+                        bool hasScore = false;
+                        final homeGoals = basePath[index].goals?.home;
+                        final awayGoals = basePath[index].goals?.away;
+                        if (homeGoals != null && awayGoals != null) {
+                          hasScore = true;
+                        }
+
                         return Column(
                           children: [
                             if (index == 0 || sameDay == false)
@@ -111,21 +135,66 @@ class _FixturesState extends State<Fixtures> {
                                   byWeekday: true,
                                 ),
                               ),
-                            getMatches(
-                              homeTeamName: basePath[index].teams?.home?.name ??
-                                  "Ipswich Town",
-                              awayTeamName: basePath[index].teams?.away?.name ??
-                                  "Everton",
-                              homeTeamFlagUrl: basePath[index]
-                                      .teams
-                                      ?.home
-                                      ?.logo ??
-                                  "https://crests.football-data.org/349.png",
-                              utcTime: basePath[index].fixture?.date ??
-                                  "2024-10-19T14:00:00Z",
-                              awayTeamFlagUrl:
-                                  basePath[index].teams?.away?.logo ??
-                                      "https://crests.football-data.org/62.png",
+                            InkWell(
+                              // onTap: () {
+                              //   final matchId = basePath[index].fixture?.id;
+                              //   final homeTeamId =
+                              //       basePath[index].teams?.home?.id;
+                              //   final awayTeamId =
+                              //       basePath[index].teams?.away?.id;
+                              //   if (matchId != null &&
+                              //       homeTeamId != null &&
+                              //       awayTeamId != null) {
+                              //     Get.to(
+                              //         MatchesDetail(
+                              //           teamAName:
+                              //               basePath[index].teams?.home?.name ??
+                              //                   '',
+                              //           teamBName:
+                              //               basePath[index].teams?.away?.name ??
+                              //                   '',
+                              //           teamAImage:
+                              //               basePath[index].teams?.home?.logo ??
+                              //                   '',
+                              //           teamBImage:
+                              //               basePath[index].teams?.away?.logo ??
+                              //                   '',
+                              //           date:
+                              //               basePath[index].fixture?.date ?? '',
+                              //           homeGoals: basePath[index].goals?.home,
+                              //           awayGoals: basePath[index].goals?.away,
+                              //           id: matchId,
+                              //         ),
+                              //         arguments: {
+                              //           'matchId': matchId,
+                              //           'homeTeamId': homeTeamId,
+                              //           'awayTeamId': awayTeamId,
+                              //         });
+                              //   }
+                              // },
+                              child: getMatches(
+                                homeTeamName:
+                                    basePath[index].teams?.home?.name ??
+                                        "Ipswich Town",
+                                awayTeamName:
+                                    basePath[index].teams?.away?.name ??
+                                        "Everton",
+                                homeTeamFlagUrl: basePath[index]
+                                        .teams
+                                        ?.home
+                                        ?.logo ??
+                                    "https://crests.football-data.org/349.png",
+                                utcTime: basePath[index].fixture?.date ??
+                                    "2024-10-19T14:00:00Z",
+                                awayTeamFlagUrl: basePath[index]
+                                        .teams
+                                        ?.away
+                                        ?.logo ??
+                                    "https://crests.football-data.org/62.png",
+                                hasScore: hasScore,
+                                homeGoals: homeGoals,
+                                awayGoals: awayGoals,
+                              ),
                             ),
                           ],
                         );
@@ -242,7 +311,6 @@ class _FixturesState extends State<Fixtures> {
       flex: 1,
       child: Container(
         height: 60.h,
-        decoration: BoxDecoration(color: Colors.white),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,30 +326,44 @@ class _FixturesState extends State<Fixtures> {
                 child: DropdownButton(
                   underline: const SizedBox.shrink(),
                   isExpanded: true,
+                  dropdownColor: Colors.white,
+                  iconEnabledColor: Colors.black,
                   value: selectedValue.value,
                   items: dropDownData.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: safeText(text: value, fontSize: 14.sp),
+                      child: safeText(
+                        text: value,
+                        fontSize: 14.sp,
+                        color: Colors.black,
+                      ),
                     );
                   }).toList(),
                   onChanged: (String? newValue) async {
                     (newValue != null) ? selectedValue.value = newValue : null;
                     if (newValue == leagueLabels[0]) {
                       selectedLeague.value = leagueLabels[0];
+                      globalSelectedValue.value =
+                          _controller.plTeams.toList()[0];
                       _controller.fixtures.clear();
                       _controller.fixtures.addAll(_controller.shortPlMatches);
+                      _controller.dataSource = _controller.plMatches;
                     }
                     if (newValue == leagueLabels[1]) {
                       selectedLeague.value = leagueLabels[1];
+                      globalSelectedValue.value =
+                          _controller.uclTeams.toList()[0];
                       _controller.fixtures.clear();
                       if (_controller.uclMatches.isEmpty) {
+                        _controller.isLoading.value = true;
                         await _controller.fetchMatches(
                             league: 2,
                             dataBase: _controller.uclMatches,
                             shortData: _controller.shortUclMatches,
                             teamsSet: _controller.uclTeams);
+                        _controller.isLoading.value = false;
                       }
+                      _controller.dataSource = _controller.uclMatches;
                       _controller.fixtures.addAll(_controller.shortUclMatches);
                     }
                   },
@@ -294,16 +376,13 @@ class _FixturesState extends State<Fixtures> {
     );
   }
 
-  Widget clubDropDownBox(
-    String title,
-    String initialValue,
-  ) {
-    RxString selectedValue = initialValue.obs;
+  Widget clubDropDownBox({
+    required String title,
+  }) {
     return Expanded(
       flex: 1,
       child: Container(
         height: 60.h,
-        decoration: BoxDecoration(color: Colors.white),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,22 +398,34 @@ class _FixturesState extends State<Fixtures> {
                 child: DropdownButton(
                   underline: const SizedBox.shrink(),
                   isExpanded: true,
-                  value: selectedValue.value,
+                  dropdownColor: Colors.white,
+                  iconEnabledColor: Colors.black,
+                  value: globalSelectedValue.value,
                   items: (selectedLeague.value == leagueLabels[0])
                       ? _controller.plTeams.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: safeText(text: value, fontSize: 14.sp),
+                            child: safeText(
+                              text: value,
+                              fontSize: 14.sp,
+                              color: Colors.black,
+                            ),
                           );
                         }).toList()
                       : _controller.uclTeams.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: safeText(text: value, fontSize: 14.sp),
+                            child: safeText(
+                              text: value,
+                              fontSize: 14.sp,
+                              color: Colors.black,
+                            ),
                           );
                         }).toList(),
                   onChanged: (String? newValue) async {
-                    (newValue != null) ? selectedValue.value = newValue : null;
+                    (newValue != null)
+                        ? globalSelectedValue.value = newValue
+                        : null;
                     (selectedLeague.value == leagueLabels[0] &&
                             newValue != null)
                         ? _controller.sortTeams(teamName: newValue, isPL: true)
@@ -358,6 +449,15 @@ class _FixturesState extends State<Fixtures> {
     DateTime utcTime = DateTime.parse(utcString);
     DateTime localTime = utcTime.toLocal();
     return localTime.day;
+  }
+
+  void manageNumbersOfMatches() {
+    if (_scrollController.position.atEdge) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _controller.loadMore(_controller.dataSource);
+      }
+    }
   }
 }
 // responsive theo size

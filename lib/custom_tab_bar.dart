@@ -8,11 +8,13 @@ class CustomTabView extends StatefulWidget {
     super.key,
     required this.tabs,
     required this.tabContents,
-    required this.height,
+    required this.tabsHeights,
+    this.physics,
   });
   final List<String> tabs;
   final List<Widget> tabContents;
-  final double height;
+  final List<double> tabsHeights;
+  final ScrollPhysics? physics;
 
   @override
   State<CustomTabView> createState() => _CustomTabViewState();
@@ -44,28 +46,34 @@ class _CustomTabViewState extends State<CustomTabView>
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.height,
-      child: Column(
-        children: [
-          Obx(
-          ()=> CustomTabBar(
-              tabs: widget.tabs,
-              selectedTabs: selectedTabIndex.value,
-              onTabChanged: (tabIndex) {
-                _tabController.animateTo(tabIndex);
-              },
+    return Obx(
+      () => SizedBox(
+        height: widget.tabsHeights[selectedTabIndex.value],
+        child: Column(
+          children: [
+            CustomTabBar(
+                tabs: widget.tabs,
+                selectedTabs: selectedTabIndex.value,
+                onTabChanged: (tabIndex) {
+                  _tabController.animateTo(tabIndex);
+                },
+              ),
+
+            SizedBox(height: 20.h,),
+            Expanded(
+              child: TabBarView(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _tabController,
+                children: List.generate(widget.tabContents.length, (index){
+                  return SingleChildScrollView(
+                    physics: widget.physics,
+                      child: widget.tabContents[index]
+                  );
+                }),
+              ),
             ),
-          ),
-          SizedBox(height: 20.h,),
-          Expanded(
-            child: TabBarView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _tabController,
-              children: widget.tabContents,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -114,7 +122,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                   child: safeText(
                     text: widget.tabs[index],
                     fontSize: 17.sp,
-                    color: (isSelected == true) ? Colors.white : null,
+                    color: (isSelected == true) ? Colors.white : Colors.black,
                   ),
                 )),
               ),
