@@ -191,7 +191,7 @@ class FavouriteController extends GetxController {
 
   void loadFavPlayersData() {
     List<String>? jsonPlayersList = prefs.getStringList('favPlayers');
-    List<String>? jsonTeamsList = prefs.getStringList('favTeamsColors');
+    List<String>? jsonTeamsList = prefs.getStringList('teamsOfFavPlayers');
     List<String>? jsonColorList = prefs.getStringList('favPlayersColors');
 
     if (jsonPlayersList != null &&
@@ -201,7 +201,7 @@ class FavouriteController extends GetxController {
           jsonTeamsList.length == jsonColorList.length) {
         favPlayers.addAll(jsonPlayersList
             .map((json) => rapid_players.Players.fromJson(jsonDecode(json))));
-        teamsOfFavPlayers.addAll(jsonPlayersList
+        teamsOfFavPlayers.addAll(jsonTeamsList
             .map((json) => rapid_players.Team.fromJson(jsonDecode(json))));
         colorByPlayers.addAll(
             jsonColorList.map((string) => Color(int.parse(string, radix: 16))));

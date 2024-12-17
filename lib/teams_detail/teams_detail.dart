@@ -15,10 +15,12 @@ class TeamsDetail extends StatefulWidget {
     this.clubColor = Colors.blue,
     this.clubName = '',
     this.clubCrest = '',
+    required this.teamId,
   });
   final Color clubColor;
   final String clubName;
   final String clubCrest;
+  final int teamId;
 
   @override
   State<TeamsDetail> createState() => _TeamsDetailState();
@@ -29,7 +31,7 @@ class _TeamsDetailState extends State<TeamsDetail> {
 
   @override
   void initState() {
-    _controller = Get.put(TeamsInfoController());
+    _controller = Get.put(TeamsInfoController(), permanent: true, tag: '${widget.teamId}');
     super.initState();
   }
 

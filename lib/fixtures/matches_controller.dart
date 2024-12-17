@@ -17,6 +17,10 @@ class MatchesController extends GetxController {
   RxBool isPl = true.obs;
   RxList<TotalFixtures> fixtures = <TotalFixtures>[].obs;
   List<TotalFixtures> dataSource = [];
+  int currentTopIndex = 0;
+  int currentBottomIndex = 0;
+  int currentTopUclIndex = 0;
+  int currentTopPlIndex = 0;
 
   @override
   Future<void> onInit() async {
@@ -77,33 +81,121 @@ class MatchesController extends GetxController {
       if (response != null) {
         dataBase.addAll(response.fixturesList ?? []);
       }
-      if (dataBase.length > 20) {
-        shortData.addAll(dataBase.take(20));
-        teamsSet.addAll(dataBase.map((e) => e.teams?.home?.name ?? ''));
-        teamsSet.addAll(dataBase.map((e) => e.teams?.away?.name ?? ''));
-      } else {
-        shortData.addAll(dataBase);
-        teamsSet.addAll(dataBase.map((e) => e.teams?.home?.name ?? ''));
-        teamsSet.addAll(dataBase.map((e) => e.teams?.away?.name ?? ''));
-      }
+      manageData(dataBase: dataBase, shortData: shortData);
+
+
+      // final index =
+      //     dataBase.indexWhere((e) => isAfterNow(e.fixture?.date ?? ''));
+      //
+      // if (dataBase.length <= 20) {
+      //   shortData.addAll(dataBase);
+      // } else {
+      //   if (index < 0) {
+      //     shortData.addAll(dataBase.sublist(dataBase.length - 20));
+      //     currentTopIndex = dataBase.length - 20;
+      //     currentBottomIndex = dataBase.length - 1;
+      //   } else {
+      //     if (index < 10) {
+      //       shortData.addAll(dataBase.sublist(0, index + 10));
+      //       currentTopIndex = 0;
+      //       currentBottomIndex = index + 9;
+      //     } else {
+      //       if (index > dataBase.length - 11) {
+      //         shortData.addAll(dataBase.sublist(index - 10));
+      //         currentTopIndex = index - 10;
+      //         currentBottomIndex = dataBase.length - 1;
+      //       } else {
+      //         shortData.addAll(dataBase.sublist(index - 9, index + 10));
+      //         currentTopIndex = index - 9;
+      //         currentBottomIndex = index + 9;
+      //       }
+      //     }
+      //   }
+      // }
+
+      teamsSet.addAll(dataBase.map((e) => e.teams?.home?.name ?? ''));
+      teamsSet.addAll(dataBase.map((e) => e.teams?.away?.name ?? ''));
     } catch (e) {
       Get.snackbar('Error', 'Error occur');
     }
   }
 
   void loadMore(List<TotalFixtures> matchesStorage) {
-    if (matchesStorage.length > fixtures.length) {
-      if (matchesStorage.length - 10 > fixtures.length) {
-        fixtures.addAll(
-            matchesStorage.sublist(fixtures.length, fixtures.length + 11));
+    // if (matchesStorage.length > fixtures.length) {
+    //   if (matchesStorage.length - 10 > fixtures.length) {
+    //     fixtures.addAll(
+    //         matchesStorage.sublist(fixtures.length, fixtures.length + 10));
+    //   } else {
+    //     fixtures.addAll(matchesStorage.sublist(fixtures.length));
+    //   }
+    // }
+
+    if (currentBottomIndex < matchesStorage.length - 1) {
+      if (currentBottomIndex < matchesStorage.length - 20) {
+        fixtures.addAll(matchesStorage.sublist(
+            currentBottomIndex + 1, currentBottomIndex + 21));
+        currentBottomIndex = currentBottomIndex + 20;
       } else {
-        fixtures.addAll(matchesStorage.sublist(fixtures.length));
+        fixtures.addAll(matchesStorage.sublist(currentBottomIndex + 1));
+        currentBottomIndex = matchesStorage.length - 1;
       }
     }
   }
 
-  void addCurrentMatch(){
-
+  void loadMoreOnTop(List<TotalFixtures> matchesStorage) {
+    if (currentTopIndex > 0) {
+      if (currentTopIndex > 19) {
+        fixtures.insertAll(
+            0, matchesStorage.sublist(currentTopIndex - 20, currentTopIndex));
+        currentTopIndex = currentTopIndex - 20;
+      } else {
+        fixtures.insertAll(0, matchesStorage.sublist(0, currentTopIndex));
+        currentTopIndex = 0;
+      }
+    }
   }
 
+  bool isAfterNow(String timeString) {
+    try {
+      DateTime targetTime = DateTime.parse(timeString).toLocal();
+      DateTime now = DateTime.now();
+      return targetTime.isAfter(now);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  void manageData({
+    required List<TotalFixtures> dataBase,
+    required List<TotalFixtures> shortData,
+  }) {
+    shortData.clear();
+    final index = dataBase.indexWhere((e) => isAfterNow(e.fixture?.date ?? ''));
+
+    if (dataBase.length <= 20) {
+      shortData.addAll(dataBase);
+    } else {
+      if (index < 0) {
+        shortData.addAll(dataBase.sublist(dataBase.length - 20));
+        currentTopIndex = dataBase.length - 20;
+        currentBottomIndex = dataBase.length - 1;
+      } else {
+        if (index < 10) {
+          shortData.addAll(dataBase.sublist(0, index + 10));
+          currentTopIndex = 0;
+          currentBottomIndex = index + 9;
+        } else {
+          if (index > dataBase.length - 11) {
+            shortData.addAll(dataBase.sublist(index - 10));
+            currentTopIndex = index - 10;
+            currentBottomIndex = dataBase.length - 1;
+          } else {
+            shortData.addAll(dataBase.sublist(index - 9, index + 10));
+            currentTopIndex = index - 9;
+            currentBottomIndex = index + 9;
+          }
+        }
+      }
+    }
+  }
 }

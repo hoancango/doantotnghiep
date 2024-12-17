@@ -136,42 +136,9 @@ class _FixturesState extends State<Fixtures>
                                 ),
                               ),
                             InkWell(
-                              // onTap: () {
-                              //   final matchId = basePath[index].fixture?.id;
-                              //   final homeTeamId =
-                              //       basePath[index].teams?.home?.id;
-                              //   final awayTeamId =
-                              //       basePath[index].teams?.away?.id;
-                              //   if (matchId != null &&
-                              //       homeTeamId != null &&
-                              //       awayTeamId != null) {
-                              //     Get.to(
-                              //         MatchesDetail(
-                              //           teamAName:
-                              //               basePath[index].teams?.home?.name ??
-                              //                   '',
-                              //           teamBName:
-                              //               basePath[index].teams?.away?.name ??
-                              //                   '',
-                              //           teamAImage:
-                              //               basePath[index].teams?.home?.logo ??
-                              //                   '',
-                              //           teamBImage:
-                              //               basePath[index].teams?.away?.logo ??
-                              //                   '',
-                              //           date:
-                              //               basePath[index].fixture?.date ?? '',
-                              //           homeGoals: basePath[index].goals?.home,
-                              //           awayGoals: basePath[index].goals?.away,
-                              //           id: matchId,
-                              //         ),
-                              //         arguments: {
-                              //           'matchId': matchId,
-                              //           'homeTeamId': homeTeamId,
-                              //           'awayTeamId': awayTeamId,
-                              //         });
-                              //   }
-                              // },
+                              onTap: () {
+                                // matchDetailNavigation(index);
+                              },
                               child: getMatches(
                                 homeTeamName:
                                     basePath[index].teams?.home?.name ??
@@ -345,6 +312,9 @@ class _FixturesState extends State<Fixtures>
                       selectedLeague.value = leagueLabels[0];
                       globalSelectedValue.value =
                           _controller.plTeams.toList()[0];
+                      _controller.manageData(
+                          dataBase: _controller.plMatches,
+                          shortData: _controller.shortPlMatches);
                       _controller.fixtures.clear();
                       _controller.fixtures.addAll(_controller.shortPlMatches);
                       _controller.dataSource = _controller.plMatches;
@@ -363,6 +333,9 @@ class _FixturesState extends State<Fixtures>
                             teamsSet: _controller.uclTeams);
                         _controller.isLoading.value = false;
                       }
+                      _controller.manageData(
+                          dataBase: _controller.uclMatches,
+                          shortData: _controller.shortUclMatches);
                       _controller.dataSource = _controller.uclMatches;
                       _controller.fixtures.addAll(_controller.shortUclMatches);
                     }
@@ -456,7 +429,35 @@ class _FixturesState extends State<Fixtures>
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         _controller.loadMore(_controller.dataSource);
+      } else if (_scrollController.position.pixels ==
+          _scrollController.position.minScrollExtent) {
+        _controller.loadMoreOnTop(_controller.dataSource);
       }
+    }
+  }
+
+  void matchDetailNavigation(int index) {
+    final basePath = _controller.fixtures;
+    final matchId = basePath[index].fixture?.id;
+    final homeTeamId = basePath[index].teams?.home?.id;
+    final awayTeamId = basePath[index].teams?.away?.id;
+    if (matchId != null && homeTeamId != null && awayTeamId != null) {
+      Get.to(
+          MatchesDetail(
+            teamAName: basePath[index].teams?.home?.name ?? '',
+            teamBName: basePath[index].teams?.away?.name ?? '',
+            teamAImage: basePath[index].teams?.home?.logo ?? '',
+            teamBImage: basePath[index].teams?.away?.logo ?? '',
+            date: basePath[index].fixture?.date ?? '',
+            homeGoals: basePath[index].goals?.home,
+            awayGoals: basePath[index].goals?.away,
+            id: matchId,
+          ),
+          arguments: {
+            'matchId': matchId,
+            'homeTeamId': homeTeamId,
+            'awayTeamId': awayTeamId,
+          });
     }
   }
 }

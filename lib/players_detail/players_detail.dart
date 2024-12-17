@@ -7,12 +7,20 @@ import 'package:mynewapp/tab_content_base.dart';
 import 'package:mynewapp/tabview_base.dart';
 
 class PlayersDetail extends StatefulWidget {
-  const PlayersDetail({super.key, this.color = Colors.red, this.clubName = '', this.clubCrest = '', this.playerName = '', this.playerImage = ''});
+  const PlayersDetail(
+      {super.key,
+      this.color = Colors.red,
+      this.clubName = '',
+      this.clubCrest = '',
+      this.playerName = '',
+      this.playerImage = '',
+      required this.playerId});
   final Color color;
   final String clubName;
   final String clubCrest;
   final String playerName;
   final String playerImage;
+  final int playerId;
 
   @override
   State<PlayersDetail> createState() => _PlayersDetailState();
@@ -23,7 +31,7 @@ class _PlayersDetailState extends State<PlayersDetail> {
 
   @override
   void initState() {
-    _controller = Get.put(PlayersInfoController());
+    _controller = Get.put(PlayersInfoController(), permanent: true, tag: '${widget.playerId}');
     super.initState();
   }
 
@@ -121,7 +129,7 @@ class _PlayersDetailState extends State<PlayersDetail> {
                     ),
                     infoRow(
                       label: "Weight".tr,
-                      text: _controller.playerData.value?.player?.height ??
+                      text: _controller.playerData.value?.player?.weight ??
                           "82 kg",
                     ),
                   ],
@@ -215,7 +223,8 @@ class _PlayersDetailState extends State<PlayersDetail> {
                           text: basePath?.games?.position ?? "_"),
                       infoRow(
                           label: 'Rating'.tr,
-                          text: basePath?.games?.rating ?? '_'),
+                          text:
+                              basePath?.games?.rating?.substring(0, 5) ?? '_'),
                     ],
                   ),
                 ),
@@ -378,9 +387,7 @@ class _PlayersDetailState extends State<PlayersDetail> {
     ));
   }
 
-  Color themeColor(){
+  Color themeColor() {
     return Color.alphaBlend(Colors.black.withOpacity(0.1), widget.color);
   }
 }
-
-

@@ -68,7 +68,7 @@ class MyGetApp extends StatelessWidget {
             locale: Get.locale ?? Get.deviceLocale ?? const Locale('vi', 'VN'),
             fallbackLocale: const Locale('vi', 'VN'),
 
-            home: const Fixtures(),
+            home: const LoadingScreen(),
           ),
         );
       },

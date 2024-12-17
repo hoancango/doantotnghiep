@@ -48,7 +48,7 @@ class _WelcomeState extends State<Welcome> {
               ),
               button(
                 onTab: (){
-                  Get.to(const FavTeamQues());
+                  Get.off(const FavTeamQues());
                 },
                 text: 'Get started'.tr,
                 color: Colors.white,

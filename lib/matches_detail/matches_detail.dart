@@ -60,6 +60,7 @@ class _MatchesDetailState extends State<MatchesDetail> {
         (_controller.isLoading.value)
             ? context.loaderOverlay.show()
             : context.loaderOverlay.hide();
+        final remains = remainingDays(widget.date);
 
         return (_controller.isLoading.value)
             ? Container()
@@ -87,21 +88,27 @@ class _MatchesDetailState extends State<MatchesDetail> {
                                 ),
                               ),
                               Expanded(
-                                  flex: 1,
-                                  child: (widget.homeGoals != null &&
-                                          widget.awayGoals != null)
-                                      ? Center(
+                                flex: 1,
+                                child: (widget.homeGoals != null &&
+                                        widget.awayGoals != null)
+                                    ? Center(
                                         child: safeText(
                                             text:
                                                 '${widget.homeGoals} - ${widget.awayGoals}'),
                                       )
-                                      : Center(
-                                          child: safeText(
+                                    : Column(
+                                        children: [
+                                          safeText(
                                               text: toLocalTime(
-                                                utcString: widget.date,
-                                                byDay: true,
-                                              ),
-                                              textAlign: TextAlign.center))),
+                                                  utcString: widget.date),
+                                              fontSize: 17.sp),
+                                          if (remains > 0)
+                                            safeText(
+                                                text:
+                                                    '$remains ${(remains > 1) ? 'days'.tr : 'day'.tr}'),
+                                        ],
+                                      ),
+                              ),
                               Expanded(
                                 flex: 2,
                                 child: teamsColumn(
@@ -573,5 +580,11 @@ class _MatchesDetailState extends State<MatchesDetail> {
         ),
       ],
     );
+  }
+
+  int remainingDays(String timeString) {
+    DateTime targetLocalTime = DateTime.parse(timeString).toLocal();
+    Duration different = targetLocalTime.difference(DateTime.now());
+    return different.inDays;
   }
 }

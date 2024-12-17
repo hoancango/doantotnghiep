@@ -58,7 +58,7 @@ class _SettingState extends State<Setting> {
                               onTap: () async {
                                 _controller.isDarkMode.value = null;
                                 Get.changeThemeMode(ThemeMode.system);
-                                print(Get.theme);
+
 
                                 await _controller.saveSelectedTheme(
                                     isDarkTheme: _controller.isDarkMode.value);
@@ -69,7 +69,7 @@ class _SettingState extends State<Setting> {
                                 width: 200.w,
                                 child: Center(
                                   child: safeText(
-                                      text: 'Default'.tr,
+                                      text: 'System'.tr,
                                       color:
                                           (_controller.isDarkMode.value != null)
                                               ? null
@@ -110,7 +110,6 @@ class _SettingState extends State<Setting> {
                                 _controller.isDarkMode.value = true;
                                 Get.changeTheme(ThemeData.dark());
                                 Get.changeThemeMode(ThemeMode.dark);
-                                print(Get.theme);
 
                                 await _controller.saveSelectedTheme(
                                     isDarkTheme: _controller.isDarkMode.value);
@@ -153,7 +152,7 @@ class _SettingState extends State<Setting> {
                                       ? (_controller.isDarkMode.value == true)
                                           ? 'Dark'.tr
                                           : 'Light'.tr
-                                      : 'Default'.tr),
+                                      : 'System'.tr),
                             ],
                           ),
                         ),

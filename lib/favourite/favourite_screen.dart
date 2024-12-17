@@ -136,19 +136,21 @@ class _FavouriteState extends State<Favourite>
                                           _controller.colorByTeams[index];
                                       final clubName = basePath?.name ?? '';
                                       final crest = basePath?.logo ?? '';
+                                      final teamId = basePath?.id;
                                       //Đang test
-                                      (basePath?.id != null)
+                                      (teamId != null)
                                           ? Get.to(
                                               TeamsDetail(
                                                 clubColor: color,
                                                 clubName: clubName,
                                                 clubCrest: crest,
+                                                teamId: teamId,
                                               ),
                                               arguments: {
                                                   'orgTeamId': _controller
                                                       .orgIds
                                                       .toList()[index],
-                                                  'rapidTeamId': basePath?.id,
+                                                  'rapidTeamId': teamId,
                                                 })
                                           : null;
                                     },
@@ -304,8 +306,9 @@ class _FavouriteState extends State<Favourite>
                                     _controller.teamsOfFavPlayers[index].logo ??
                                         '';
                                 final color = _controller.colorByPlayers[index];
+                                final playerId = basePath.id;
 
-                                if (basePath.id != null) {
+                                if (playerId != null) {
                                   Get.to(
                                     PlayersDetail(
                                       playerImage: playerImage,
@@ -313,9 +316,10 @@ class _FavouriteState extends State<Favourite>
                                       clubName: clubName,
                                       clubCrest: clubCrest,
                                       color: color,
+                                      playerId: playerId,
                                     ),
                                     arguments: {
-                                      'rapidPlayerId': basePath.id,
+                                      'rapidPlayerId': playerId,
                                     },
                                   );
                                 }

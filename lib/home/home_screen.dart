@@ -112,8 +112,13 @@ class _LatestState extends State<Home> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.star, color: Colors.yellow,),
-                                    const SizedBox(width: 5,),
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.yellow.shade800,
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
                                     Text(
                                       "${_controller.favTitle ?? 'Favourite'.tr}",
                                       style: TextStyle(
@@ -169,6 +174,7 @@ class _LatestState extends State<Home> {
                                   final basePath =
                                       _controller.favTeamNews[index];
                                   return otherNews(
+                                      isFavNews: true,
                                       index: index,
                                       favImageUrl: basePath.urlToImage ??
                                           "https://ichef.bbci.co.uk/ace/standard/1024/cpsprodpb/0adb/live/4a04a790-87c9-11ef-b6b0-c9af5f7f16e4.jpg",
