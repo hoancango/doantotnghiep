@@ -488,21 +488,29 @@ Widget safeText({
   );
 }
 
-String toLocalTime({required String utcString, bool byWeekday = false, bool byDay = false,}) {
+String toLocalTime({
+  required String utcString,
+  bool byWeekday = false,
+  bool byDay = false,
+  bool byYear = false,
+}) {
   String localTimeString = '';
   try {
     DateTime utcTime = DateTime.parse(utcString);
     DateTime localTime = utcTime.toLocal();
     String weekDay = weekDayFormatter(localTime.weekday);
+    String year = localTime.year.toString().padLeft(2, '0');
     String day = localTime.day.toString().padLeft(2, '0');
     String month = localTime.month.toString().padLeft(2, '0');
     String hours = localTime.hour.toString().padLeft(2, '0');
     String minutes = localTime.minute.toString().padLeft(2, '0');
 
-    if (byWeekday == false && byDay == false) {
+    if (byWeekday == false && byDay == false && byYear == false) {
       localTimeString = '$hours:$minutes';
-    } else if(byDay == true){
+    } else if (byDay == true) {
       localTimeString = '$day-$month \n $hours:$minutes';
+    } else if(byYear == true){
+      localTimeString = '$weekDay, ngày $day-$month-$year';
     }else {
       localTimeString = '$weekDay ngày $day tháng $month';
     }

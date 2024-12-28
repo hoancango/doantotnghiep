@@ -137,7 +137,7 @@ class _FixturesState extends State<Fixtures>
                               ),
                             InkWell(
                               onTap: () {
-                                // matchDetailNavigation(index);
+                                matchDetailNavigation(index);
                               },
                               child: getMatches(
                                 homeTeamName:

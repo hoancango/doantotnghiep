@@ -12,7 +12,7 @@ class MatchesDetail extends StatefulWidget {
     this.teamBName = '',
     this.teamAImage = '',
     this.teamBImage = '',
-    this.date = '',
+    this.date = "2024-10-26T14:00:00+00:00",
     this.homeGoals,
     this.awayGoals,
     this.id = 0,
@@ -129,6 +129,10 @@ class _MatchesDetailState extends State<MatchesDetail> {
                         fontSize: 15.sp,
                         isBold: true,
                       ),
+                      const SizedBox(height: 5.0,),
+
+                      if(_controller.teamAStats.isEmpty)
+                        safeText(text: 'Thống kê chưa có sẵn', fontSize: 12.sp),
 
                       ListView.builder(
                         shrinkWrap: true,
@@ -140,27 +144,30 @@ class _MatchesDetailState extends State<MatchesDetail> {
                           final title = basePathA.type;
                           final teamA = basePathA.value ?? '_';
                           final teamB = basePathB.value ?? '_';
-                          return Row(
-                            children: [
-                              Expanded(
-                                  flex: 1,
-                                  child:
-                                      Center(child: safeText(text: "$teamA"))),
-                              Expanded(
-                                  flex: 1,
-                                  child: Center(
-                                      child: safeText(text: title ?? ''))),
-                              Expanded(
-                                  flex: 1,
-                                  child:
-                                      Center(child: safeText(text: "$teamB"))),
-                            ],
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                    flex: 1,
+                                    child:
+                                        Center(child: safeText(text: "$teamA"))),
+                                Expanded(
+                                    flex: 2,
+                                    child: Center(
+                                        child: safeText(text: title ?? ''))),
+                                Expanded(
+                                    flex: 1,
+                                    child:
+                                        Center(child: safeText(text: "$teamB"))),
+                              ],
+                            ),
                           );
                         },
                       ),
 
                       SizedBox(
-                        height: 15.0.h,
+                        height: 25.0.h,
                       ),
                       safeText(
                         text: 'Thành tích đối đầu',
@@ -212,45 +219,6 @@ class _MatchesDetailState extends State<MatchesDetail> {
                         height: 5.h,
                       ),
 
-                      // safeText(text: 'Chủ nhật, 24/02/2024'),
-                      // getMatches(
-                      //   hasScore: true,
-                      //   hasNavigationArrow: false,
-                      //   homeGoals: 0,
-                      //   awayGoals: 1,
-                      //   homeTeamName: "Bournemouth",
-                      //   awayTeamName: "Manchester City",
-                      //   homeTeamFlagUrl:
-                      //       "https://media.api-sports.io/football/teams/35.png",
-                      //   awayTeamFlagUrl:
-                      //       "https://media.api-sports.io/football/teams/50.png",
-                      // ),
-                      // safeText(text: 'Chủ nhật, 04/11/2023'),
-                      // getMatches(
-                      //   hasScore: true,
-                      //   hasNavigationArrow: false,
-                      //   homeGoals: 6,
-                      //   awayGoals: 1,
-                      //   awayTeamName: "Bournemouth",
-                      //   homeTeamName: "Manchester City",
-                      //   awayTeamFlagUrl:
-                      //       "https://media.api-sports.io/football/teams/35.png",
-                      //   homeTeamFlagUrl:
-                      //       "https://media.api-sports.io/football/teams/50.png",
-                      // ),
-                      // safeText(text: 'Chủ nhật, 25/02/2023'),
-                      // getMatches(
-                      //   hasScore: true,
-                      //   hasNavigationArrow: false,
-                      //   homeGoals: 1,
-                      //   awayGoals: 4,
-                      //   homeTeamName: "Bournemouth",
-                      //   awayTeamName: "Manchester City",
-                      //   homeTeamFlagUrl:
-                      //       "https://media.api-sports.io/football/teams/35.png",
-                      //   awayTeamFlagUrl:
-                      //       "https://media.api-sports.io/football/teams/50.png",
-                      // ),
 
                       ListView.builder(
                           shrinkWrap: true,
@@ -262,7 +230,7 @@ class _MatchesDetailState extends State<MatchesDetail> {
                             final date = basePath.fixture?.date ?? '';
                             final localTime = toLocalTime(
                               utcString: date,
-                              byWeekday: true,
+                              byYear: true,
                             );
                             return Column(
                               children: [

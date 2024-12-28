@@ -131,38 +131,6 @@ class _LatestState extends State<Home> {
                               ),
                             ),
 
-                            // otherNews(
-                            //   isFavNews: true,
-                            //   index: 0,
-                            //   favImageUrl: (_controller.favTeamNews.length > 3)
-                            //       ? _controller.favTeamNews[0].urlToImage ?? ''
-                            //       : "https://cdn.mos.cms.futurecdn.net/L8tK8cm8NRPdwNYw9PH5sA-1200-80.jpg",
-                            //   title: (_controller.favTeamNews.length > 3)
-                            //       ? _controller.favTeamNews[0].title ?? ''
-                            //       : "‘Liverpool did the same thing to Arsenal in 2001 that Manchester United did to us at Bayern in 1999 – in two moments, we changed the game in our favour’: German defender recalls dramatic FA Cup final victory at the Millennium Stadium",
-                            // ),
-                            //
-                            // otherNews(
-                            //   isFavNews: true,
-                            //   index: 1,
-                            //   favImageUrl: (_controller.favTeamNews.length > 3)
-                            //       ? _controller.favTeamNews[1].urlToImage ?? ''
-                            //       : "https://ichef.bbci.co.uk/news/1024/branded_sport/a111/live/83419ef0-871a-11ef-a3e8-b9f29f911fa2.jpg",
-                            //   title: (_controller.favTeamNews.length > 3)
-                            //       ? _controller.favTeamNews[1].title ?? ''
-                            //       : "'Why not aim for Champions League?' Liverpool's Bonner",
-                            // ),
-                            //
-                            // otherNews(
-                            //   isFavNews: true,
-                            //   index: 2,
-                            //   favImageUrl: (_controller.favTeamNews.length > 3)
-                            //       ? _controller.favTeamNews[2].urlToImage ?? ''
-                            //       : "https://ichef.bbci.co.uk/ace/standard/1024/cpsprodpb/0adb/live/4a04a790-87c9-11ef-b6b0-c9af5f7f16e4.jpg",
-                            //   title: (_controller.favTeamNews.length > 3)
-                            //       ? _controller.favTeamNews[2].title ?? ''
-                            //       : "Rooney reflects on pictures from his career",
-                            // ),
 
                             ListView.builder(
                                 shrinkWrap: true,

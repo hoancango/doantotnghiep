@@ -26,9 +26,13 @@ class MatchesDetailController extends GetxController {
   @override
   Future<void> onInit() async {
     isLoading.value = true;
-    matchId = Get.arguments['matchId'] ?? 1208111;
-    idTeamA = Get.arguments['homeTeamId'] ?? 50;
-    idTeamB = Get.arguments['awayTeamId'] ?? 41;
+    matchId = Get.arguments['matchId'];
+    idTeamA = Get.arguments['homeTeamId'];
+    idTeamB = Get.arguments['awayTeamId'];
+    // matchId = 1208111;
+    // idTeamA = 50;
+    // idTeamB = 41;
+
     if (matchId != null) {
       await fetchMatchDetail(matchId ?? 0);
     }
