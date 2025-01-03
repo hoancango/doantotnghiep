@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mynewapp/api_service/rapid_api_service.dart';
+import 'package:mynewapp/common_resources.dart';
 import 'package:mynewapp/matches_detail/head_to_head_model.dart';
 import 'package:mynewapp/matches_detail/match_statistics_model.dart';
 
@@ -90,7 +91,6 @@ class MatchesDetailController extends GetxController {
         teamAStats.addAll(totalTeamsStats[0].statistics ?? []);
         teamBStats.addAll(totalTeamsStats[1].statistics ?? []);
       }
-      print('KET QUA fetchMatchDetail LA ${totalTeamsStats.length}');
     }
   }
 
@@ -100,8 +100,8 @@ class MatchesDetailController extends GetxController {
 
     if (response != null) {
       headToHead.addAll(response.matches ?? []);
-      shortHeadToHead.addAll(headToHead.take(5));
-      print('KET QUA fetchHeadToHead LA ${headToHead.length}');
+      shortHeadToHead.addAll(headToHead.where((match) => match.goals?.away != null && match.goals?.home != null).take(5));
     }
   }
+
 }

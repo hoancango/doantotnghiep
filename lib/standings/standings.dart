@@ -48,40 +48,6 @@ class _StandingsState extends State<Standings> {
     );
   }
 
-  // Widget standings(List<Map<String, dynamic>> totalData) {
-  //   return ListView.builder(
-  //       shrinkWrap: true,
-  //       physics: const NeverScrollableScrollPhysics(),
-  //       itemCount: totalData.length,
-  //       itemBuilder: (context, index) {
-  //         int position = totalData[index]['position'];
-  //         Map<String, dynamic> teamData = totalData[index]['team'];
-  //         String shortName = teamData['shortName'];
-  //         String crest = teamData['crest'];
-  //         int playedGames = totalData[index]['playedGames'];
-  //         int goalDifference = totalData[index]['goalDifference'];
-  //         int points = totalData[index]['points'];
-  //         int won = totalData[index]['won'];
-  //         int draw = totalData[index]['draw'];
-  //         int lost = totalData[index]['lost'];
-  //         int goalsFor = totalData[index]['goalsFor'];
-  //         int goalsAgainst = totalData[index]['goalsAgainst'];
-  //
-  //         return standingsRow(
-  //           position: position,
-  //           crest: crest,
-  //           shortName: shortName,
-  //           playedGames: playedGames,
-  //           goalDifference: goalDifference,
-  //           points: points,
-  //           won: won,
-  //           draw: draw,
-  //           lost: lost,
-  //           goalsFor: goalsFor,
-  //           goalsAgainst: goalsAgainst,
-  //         );
-  //       });
-  // }
 
   Widget standings(List<foot_org.Table> totalData) {
     return ListView.builder(
@@ -114,6 +80,7 @@ class _StandingsState extends State<Standings> {
             lost: lost,
             goalsFor: goalsFor,
             goalsAgainst: goalsAgainst,
+            fontColor: Colors.black,
           );
         });
   }

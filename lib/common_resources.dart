@@ -509,9 +509,9 @@ String toLocalTime({
       localTimeString = '$hours:$minutes';
     } else if (byDay == true) {
       localTimeString = '$day-$month \n $hours:$minutes';
-    } else if(byYear == true){
+    } else if (byYear == true) {
       localTimeString = '$weekDay, ngày $day-$month-$year';
-    }else {
+    } else {
       localTimeString = '$weekDay ngày $day tháng $month';
     }
   } catch (e) {
@@ -628,6 +628,7 @@ Widget standingsRow({
   int? won,
   int? draw,
   int? lost,
+  Color? fontColor,
 }) {
   int positionFlex = 1;
   int clubRowFlex = 5;
@@ -657,6 +658,7 @@ Widget standingsRow({
                   child: safeText(
                     text: 'Pos',
                     fontSize: headerSize,
+                    color: fontColor,
                   ),
                 ),
                 Expanded(
@@ -664,6 +666,7 @@ Widget standingsRow({
                   child: safeText(
                     text: 'Club',
                     fontSize: headerSize,
+                    color: fontColor,
                   ),
                 ),
                 Expanded(
@@ -672,6 +675,7 @@ Widget standingsRow({
                       child: safeText(
                     text: 'Pl',
                     fontSize: headerSize,
+                    color: fontColor,
                   )),
                 ),
                 Expanded(
@@ -680,6 +684,7 @@ Widget standingsRow({
                       child: safeText(
                     text: 'W',
                     fontSize: headerSize,
+                    color: fontColor,
                   )),
                 ),
                 Expanded(
@@ -688,6 +693,7 @@ Widget standingsRow({
                       child: safeText(
                     text: 'D',
                     fontSize: headerSize,
+                    color: fontColor,
                   )),
                 ),
                 Expanded(
@@ -696,6 +702,7 @@ Widget standingsRow({
                       child: safeText(
                     text: 'L',
                     fontSize: headerSize,
+                    color: fontColor,
                   )),
                 ),
                 Expanded(
@@ -704,6 +711,7 @@ Widget standingsRow({
                       child: safeText(
                     text: 'GD',
                     fontSize: headerSize,
+                    color: fontColor,
                   )),
                 ),
                 Expanded(
@@ -712,6 +720,7 @@ Widget standingsRow({
                       child: safeText(
                     text: 'Pts',
                     fontSize: headerSize,
+                    color: fontColor,
                   )),
                 ),
               ],
@@ -722,7 +731,10 @@ Widget standingsRow({
         children: [
           Expanded(
             flex: positionFlex,
-            child: safeText(text: '$position'),
+            child: safeText(
+              text: '$position',
+              color: fontColor,
+            ),
           ),
           Expanded(
             flex: clubRowFlex,
@@ -741,41 +753,65 @@ Widget standingsRow({
                 ),
                 Expanded(
                   flex: shortNameFlex,
-                  child: safeText(text: shortName),
+                  child: safeText(
+                    text: shortName,
+                    color: fontColor,
+                  ),
                 ),
               ],
             ),
           ),
           Expanded(
             flex: playedGamesFlex,
-            child: Center(child: safeText(text: '$playedGames')),
+            child: Center(
+                child: safeText(
+              text: '$playedGames',
+              color: fontColor,
+            )),
           ),
           if (won != null)
             Expanded(
               flex: wonFlex,
-              child: Center(child: safeText(text: '$won')),
+              child: Center(
+                  child: safeText(
+                text: '$won',
+                color: fontColor,
+              )),
             ),
           if (draw != null)
             Expanded(
               flex: drawFlex,
-              child: Center(child: safeText(text: '$draw')),
+              child: Center(
+                  child: safeText(
+                text: '$draw',
+                color: fontColor,
+              )),
             ),
           if (lost != null)
             Expanded(
               flex: lostFlex,
-              child: Center(child: safeText(text: '$lost')),
+              child: Center(
+                  child: safeText(
+                text: '$lost',
+                color: fontColor,
+              )),
             ),
           Expanded(
             flex: goalDifferenceFlex,
             child: Center(
                 child: safeText(
-                    text: (goalDifference > 0)
-                        ? '+$goalDifference'
-                        : '$goalDifference')),
+              text:
+                  (goalDifference > 0) ? '+$goalDifference' : '$goalDifference',
+              color: fontColor,
+            )),
           ),
           Expanded(
             flex: pointsFlex,
-            child: Center(child: safeText(text: '$points')),
+            child: Center(
+                child: safeText(
+              text: '$points',
+              color: fontColor,
+            )),
           ),
         ],
       ),

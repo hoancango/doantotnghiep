@@ -57,6 +57,7 @@ class _SettingState extends State<Setting> {
                             InkWell(
                               onTap: () async {
                                 _controller.isDarkMode.value = null;
+                                _controller.changeThemeToSystem();
                                 Get.changeThemeMode(ThemeMode.system);
 
 

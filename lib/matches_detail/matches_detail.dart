@@ -94,14 +94,14 @@ class _MatchesDetailState extends State<MatchesDetail> {
                                     ? Center(
                                         child: safeText(
                                             text:
-                                                '${widget.homeGoals} - ${widget.awayGoals}'),
+                                                '${widget.homeGoals} - ${widget.awayGoals}', fontSize: 25.sp),
                                       )
                                     : Column(
                                         children: [
                                           safeText(
                                               text: toLocalTime(
                                                   utcString: widget.date),
-                                              fontSize: 17.sp),
+                                              fontSize: 25.sp),
                                           if (remains > 0)
                                             safeText(
                                                 text:
@@ -184,12 +184,12 @@ class _MatchesDetailState extends State<MatchesDetail> {
                         text2: "${_controller.totalMatches}",
                         text3: '${_controller.teamBWinNumbers}',
                         detailStatsWidgetA: winRateBar(
-                          matchesTotal: _controller.headToHead.length,
+                          matchesTotal: _controller.totalMatches,
                           winMatches: _controller.teamAWinNumbers,
                         ),
                         detailStatsWidgetB: winRateBar(
                           isTeamA: false,
-                          matchesTotal: _controller.headToHead.length,
+                          matchesTotal: _controller.totalMatches,
                           winMatches: _controller.teamBWinNumbers,
                         ),
                       ),

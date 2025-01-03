@@ -202,7 +202,7 @@ class _FixturesState extends State<Fixtures>
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.0.w),
-                  child: Icon(Icons.arrow_drop_down),
+                  child: const Icon(Icons.arrow_drop_down),
                 ),
               ],
             ),

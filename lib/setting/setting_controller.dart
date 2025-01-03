@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mynewapp/home/home_controller.dart';
 import 'package:mynewapp/news/news_controller.dart';
@@ -17,10 +18,10 @@ class SettingController extends GetxController {
 
   @override
   Future<void> onInit() async {
-    if(Get.isRegistered<HomeController>()){
+    if (Get.isRegistered<HomeController>()) {
       homeController = Get.find<HomeController>();
     }
-    if(Get.isRegistered<NewsController>()){
+    if (Get.isRegistered<NewsController>()) {
       newsController = Get.find<NewsController>();
     }
     prefs = await SharedPreferences.getInstance();
@@ -30,8 +31,15 @@ class SettingController extends GetxController {
     super.onInit();
   }
 
-
-
+  void changeThemeToSystem() {
+    final brightness =
+        WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    if (brightness == Brightness.dark) {
+      Get.changeTheme(ThemeData.dark());
+    } else {
+      Get.changeTheme(ThemeData.light());
+    }
+  }
 
   void loadFavouriteUserChoice() {
     crestChoice.value = prefs.getString('teamCrestChoice');
@@ -59,7 +67,9 @@ class SettingController extends GetxController {
     // save link icon
     if (welcomeController.selectedOrgShortName.isNotEmpty) {
       await prefs.setString(
-          'shortTeamNameChoice', welcomeController.selectedOrgShortName,);
+        'shortTeamNameChoice',
+        welcomeController.selectedOrgShortName,
+      );
     }
   }
 

@@ -46,25 +46,30 @@ class MatchesController extends GetxController {
         sortPl.addAll(plMatches.where((e) =>
             e.teams?.home?.name == teamName ||
             e.teams?.away?.name == teamName));
-        (sortPl.length > 20)
-            ? fixtures.addAll(sortPl.take(20))
-            : fixtures.addAll(sortPl);
+        // (sortPl.length > 20)
+        //     ? fixtures.addAll(sortPl.take(20))
+        //     : fixtures.addAll(sortPl);
+        manageData(dataBase: sortPl, shortData: fixtures);
+
         dataSource = sortPl;
       } else {
         sortUcl.clear();
         sortUcl.addAll(uclMatches.where((e) =>
             e.teams?.home?.name == teamName ||
             e.teams?.away?.name == teamName));
-        (sortUcl.length > 20)
-            ? fixtures.addAll(sortUcl.take(20))
-            : fixtures.addAll(sortUcl);
+        // (sortUcl.length > 20)
+        //     ? fixtures.addAll(sortUcl.take(20))
+        //     : fixtures.addAll(sortUcl);
+        manageData(dataBase: sortUcl, shortData: fixtures);
         dataSource = sortUcl;
       }
     } else {
       if (isPL == true) {
+        manageData(dataBase: plMatches, shortData: shortPlMatches);
         fixtures.addAll(shortPlMatches);
         dataSource = plMatches;
       } else {
+        manageData(dataBase: uclMatches, shortData: shortUclMatches);
         fixtures.addAll(shortUclMatches);
         dataSource = uclMatches;
       }
@@ -84,35 +89,6 @@ class MatchesController extends GetxController {
       manageData(dataBase: dataBase, shortData: shortData);
 
 
-      // final index =
-      //     dataBase.indexWhere((e) => isAfterNow(e.fixture?.date ?? ''));
-      //
-      // if (dataBase.length <= 20) {
-      //   shortData.addAll(dataBase);
-      // } else {
-      //   if (index < 0) {
-      //     shortData.addAll(dataBase.sublist(dataBase.length - 20));
-      //     currentTopIndex = dataBase.length - 20;
-      //     currentBottomIndex = dataBase.length - 1;
-      //   } else {
-      //     if (index < 10) {
-      //       shortData.addAll(dataBase.sublist(0, index + 10));
-      //       currentTopIndex = 0;
-      //       currentBottomIndex = index + 9;
-      //     } else {
-      //       if (index > dataBase.length - 11) {
-      //         shortData.addAll(dataBase.sublist(index - 10));
-      //         currentTopIndex = index - 10;
-      //         currentBottomIndex = dataBase.length - 1;
-      //       } else {
-      //         shortData.addAll(dataBase.sublist(index - 9, index + 10));
-      //         currentTopIndex = index - 9;
-      //         currentBottomIndex = index + 9;
-      //       }
-      //     }
-      //   }
-      // }
-
       teamsSet.addAll(dataBase.map((e) => e.teams?.home?.name ?? ''));
       teamsSet.addAll(dataBase.map((e) => e.teams?.away?.name ?? ''));
     } catch (e) {
@@ -121,14 +97,6 @@ class MatchesController extends GetxController {
   }
 
   void loadMore(List<TotalFixtures> matchesStorage) {
-    // if (matchesStorage.length > fixtures.length) {
-    //   if (matchesStorage.length - 10 > fixtures.length) {
-    //     fixtures.addAll(
-    //         matchesStorage.sublist(fixtures.length, fixtures.length + 10));
-    //   } else {
-    //     fixtures.addAll(matchesStorage.sublist(fixtures.length));
-    //   }
-    // }
 
     if (currentBottomIndex < matchesStorage.length - 1) {
       if (currentBottomIndex < matchesStorage.length - 20) {
